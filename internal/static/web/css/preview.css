@@ -1,0 +1,148 @@
+/* preview.css */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    overflow: hidden;
+}
+
+.modal-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filename {
+    font-weight: bold;
+    font-size: 18px;
+    color: var(--text-color);
+}
+
+.preview-controls {
+    display: flex;
+}
+
+.preview-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+.preview-button img {
+    width: 24px;
+    height: 24px;
+    filter: none;
+}
+
+.binary-preview {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--primary-color);
+    border-radius: 8px;
+}
+
+/* ダークモード時の設定 */
+.dark-mode .preview-button img {
+    filter: invert(1) brightness(1.5);
+}
+.dark-mode #binary-img {
+    filter: invert(1) brightness(1.5);
+}
+
+
+#viewer-content {
+    flex-grow: 1;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#viewer-content > * {
+    background-color: var(--primary-color);
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90%;
+    max-height: 90%;
+}
+
+#viewer-content img,
+#viewer-content video {
+    max-width: 100%;
+    max-height: calc(100vh - 100px);
+    object-fit: contain;
+    background-color: transparent;
+    padding: 0;
+}
+
+#viewer-content audio {
+    width: 100%;
+    max-width: 500px;
+}
+
+#viewer-content pre {
+    width: 100%;
+    max-width: 800px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 15px;
+    border-radius: 5px;
+    overflow: auto;
+    max-height: calc(100vh - 140px);
+}
+
+#viewer-content code {
+    font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    background-color: transparent;
+}
+
+#binary-img {
+    width: 30%;
+    height: 30%;
+}
+
+.file-info {
+    background-color: var(--primary-color);
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    font-size: 14px;
+}
+
+.file-info h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: var(--accent-color);
+}
+
+.file-info p {
+    margin: 5px 0;
+    color:#1a1a1a;
+}
+
+.hidden {
+    display: none;
+}

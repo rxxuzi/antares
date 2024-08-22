@@ -1,0 +1,234 @@
+/* styles.css */
+:root {
+    --primary-color: #f5f5f5;
+    --secondary-color: #ffffff;
+    --accent-color: #ff1a3f;
+    --text-color: #202124;
+    --sidebar-bg: black;
+    --sidebar-text: #ffffff;
+    --border-color: #dadce0;
+    --hover-color: #e8f0fe;
+    --item-color: #5f6368;
+    --folder-bg: #e8f0fe;
+
+    /*size*/
+    --header-height: 60px;
+    --sidebar-width: 260px;
+    --toggle-width: 60px;
+
+    --folder-height: 50px;
+    --file-height: 200px;
+}
+
+.dark-mode {
+    --primary-color: #121212;
+    --secondary-color: #1e1e1e;
+    --text-color: #e0e0e0;
+    --sidebar-text: #ffffff;
+    --border-color: #333333;
+    --hover-color: #2c2c2c;
+    --item-color: #b0b0b0;
+    --folder-bg: #2a2a2a;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+    overflow: hidden;
+    color: var(--text-color);
+}
+
+header {
+    background: var(--secondary-color);
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    z-index: 900;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: left 0.3s;
+}
+
+header h1 {
+    font-size: 24px;
+    color: var(--accent-color);
+    font-weight: 600;
+    margin: 0 20px 0 0;
+}
+
+header .breadcrumb {
+    font-size: 14px;
+    color: var(--item-color);
+    opacity: 0.8;
+}
+
+#wrapper {
+    display: flex;
+    height: 100%;
+}
+
+#sidebar-wrapper {
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    transition: all 0.3s;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+#content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left 0.3s;
+    margin-left: var(--sidebar-width);
+}
+
+
+/*サイドバーが閉じているときのスタイル*/
+.sidebar-closed #sidebar-wrapper {
+    width: var(--toggle-width);
+}
+.sidebar-closed #content-wrapper {
+    margin-left: var(--toggle-width);
+}
+.sidebar-closed #content-wrapper  header{
+    left: var(--toggle-width);
+}
+
+
+#menu-toggle {
+    background: var(--sidebar-bg);
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--sidebar-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--toggle-width);
+    height: var(--header-height);
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.sidebar-header {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    padding-left: var(--toggle-width);
+    background-color: var(--sidebar-bg);
+}
+
+.sidebar-logo {
+    color: var(--sidebar-text);
+    font-size: 24px;
+    font-weight: bold;
+}
+
+main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    margin-top: var(--header-height);
+    background-color: var(--primary-color);
+}
+
+.sidebar-nav {
+    padding: 0;
+    list-style: none;
+    margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.sidebar-nav li {
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-nav li:hover {
+    background: #333;
+    color: var(--accent-color);
+}
+
+.sidebar-nav li i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-nav li span {
+    display: inline-block;
+}
+
+/* サイドバーが閉じているときの項目のスタイル */
+.sidebar-closed .sidebar-nav li {
+    padding: 15px 0;
+    justify-content: center;
+}
+
+.sidebar-closed .sidebar-nav li span {
+    display: none;
+}
+
+.sidebar-closed .sidebar-nav li i {
+    margin-right: 0;
+}
+
+.sidebar-closed .sidebar-logo {
+    opacity: 0;
+    visibility: hidden;
+}
+
+@media (max-width: 768px) {
+    #sidebar-wrapper {
+        width: var(--toggle-width);
+    }
+    #content-wrapper {
+        margin-left: var(--toggle-width);
+    }
+    header {
+        left: var(--toggle-width);
+    }
+    .sidebar-logo {
+        display: none;
+    }
+    .sidebar-nav li span {
+        display: none;
+    }
+    .sidebar-nav li {
+        padding: 15px 0;
+        justify-content: center;
+    }
+    .sidebar-nav li i {
+        margin-right: 0;
+    }
+}
+
+.theme-toggle {
+    cursor: pointer;
+}

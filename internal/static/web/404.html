@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <style>
+        :root {
+            --void: #6554ff;
+            --text-color: #ffffff;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            position: absolute;
+            width: 100vmin;
+            height: 100vmin;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hole {
+            position: absolute;
+            width: 60vmin;
+            height: 60vmin;
+            border-radius: 50%;
+            box-shadow: 0 0 70vmin 0 var(--void), 0 0 10vmin 0 #fff;
+        }
+
+        .hole:first-child {
+            animation: jiggle 0.5s infinite;
+        }
+        .hole:last-child {
+            animation: pulse 2s ease-out infinite alternate;
+        }
+
+        .txt {
+            position: absolute;
+            text-align: center;
+            width: 100%;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 5rem;
+            margin: 0;
+            text-shadow: 0 0 10px var(--void);
+        }
+
+        p {
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+
+        a {
+            color: #a64dff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--void);
+            text-decoration: underline;
+        }
+
+        @keyframes pulse {
+            from { box-shadow: 0 0 10vmin 0 var(--void), 0 0 2vmin 0 #fff; }
+            to { box-shadow: 0 0 100vmin 0 var(--void), 0 0 10vmin 0 #fff; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hole"></div>
+    <div class="txt">
+        <h1>404</h1>
+        <p>Page Not Found</p>
+        <a href="/">Go to home</a>
+    </div>
+</div>
+</body>
+</html>

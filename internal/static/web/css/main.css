@@ -1,0 +1,141 @@
+/* main.css */
+main h2 {
+    font-size: 16px;
+    color: var(--item-color);
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+/* アイテムのスタイル */
+.item {
+    background-color: var(--secondary-color);
+    border-radius: 8px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    overflow: hidden;
+    position: relative;
+    height: var(--file-height);
+    display: flex;
+    flex-direction: column;
+}
+
+.item:hover {
+    background-color: var(--hover-color);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.item a {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.item .icon-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.item i {
+    font-size: 48px;
+    color: var(--item-color);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.item span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    text-align: center;
+    padding: 8px;
+    background-color: var(--secondary-color);
+    font-size: 13px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+}
+
+.thumbnail {
+    width: 100%;
+    height: calc(100% - 30px);
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* フォルダー固有のスタイル */
+.folder {
+    background-color: var(--secondary-color);
+    height: var(--folder-height);
+    display: flex;
+    align-items: center;
+}
+
+.folder:hover {
+    background-color: var(--hover-color);
+}
+
+.folder span {
+    background-color: transparent;
+    color: var(--text-color);
+    position: static;
+    padding: 0;
+}
+
+.folder a {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 12px;
+}
+
+.folder .icon-name {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.folder i {
+    font-size: 24px;
+    margin-right: 12px;
+    margin-bottom: 0;
+    color: var(--accent-color);
+    position: static;
+    transform: none;
+}
+
+/* ファイル固有のスタイル */
+.file a {
+    justify-content: flex-end;
+}
+
+.file .icon-name {
+    justify-content: center;
+    height: 100%;
+}
+
+.file i {
+    font-size: 64px;
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antares: {{.CurrentPath}}</title>
+    <script>
+        (function() {
+            const darkMode = localStorage.getItem('darkMode');
+            const sidebarClosed = localStorage.getItem('sidebarClosed') === 'true';
+            if (darkMode === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+            if (sidebarClosed) {
+                document.documentElement.classList.add('sidebar-closed');
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="/web/css/styles.css">
+    <link rel="stylesheet" href="/web/css/preview.css">
+    <link rel="stylesheet" href="/web/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image" href="/web/favicon.ico">
+</head>
+<body>
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <div class="sidebar-header">
+            <button id="menu-toggle"><i class="fas fa-bars"></i></button>
+            <div class="sidebar-logo">
+                Antares
+            </div>
+        </div>
+        <ul class="sidebar-nav">
+            <li class="file-upload"><i class="fas fa-upload"></i><span>Upload</span></li>
+            <li class="share"><i class="fas fa-rocket"></i><span>Share</span></li>
+            <li class="theme-toggle"><i class="fas fa-moon"></i><span>Dark</span></li>
+        </ul>
+    </div>
+    <div id="content-wrapper">
+        <header>
+            <h1>Antares</h1>
+            <div class="breadcrumb">{{.Path}}</div>
+        </header>
+        <main>
+            <section class="folders">
+                <h2>Folders</h2>
+                <div class="grid">
+                    {{if ne .Path "/"}}
+                    <div class="item folder">
+                        <a href="..">
+                            <div class="icon-name">
+                                <i class="fas fa-folder"></i>
+                                <span>..</span>
+                            </div>
+                        </a>
+                    </div>
+                    {{end}}
+                    {{range .Files}}
+                    {{if .IsDir}}
+                    <div class="item folder">
+                        <a href="{{.Name}}/">
+                            <div class="icon-name">
+                                <i class="fas fa-folder"></i>
+                                <span title="{{.Name}}">{{truncate .Name 20}}</span>
+                            </div>
+                        </a>
+                    </div>
+                    {{end}}
+                    {{end}}
+                </div>
+            </section>
+
+            <section class="files">
+                <h2>Files</h2>
+                <div class="grid">
+                    {{range .Files}}
+                    {{if not .IsDir}}
+                    <div class="item file {{.Type}}">
+                        <a href="{{.Name}}" class="file-link" data-filename="{{.Name}}" data-size="{{formatSize .Size}}" data-modified="{{formatTime .ModTime}}">
+                            <div class="icon-name">
+                                {{if isImage .Name}}
+                                <img src="{{.Name}}" alt="{{.Name}}" class="thumbnail">
+                                {{else if isVideo .Name}}
+                                <video src="{{.Name}}" class="thumbnail" preload="metadata"></video>
+                                {{else}}
+                                <i class="fas {{getFileIcon .Name}}"></i>
+                                {{end}}
+                                <span title="{{.Name}}">{{truncate .Name 20}}</span>
+                            </div>
+                        </a>
+                    </div>
+                    {{end}}
+                    {{end}}
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<div id="preview" class="modal">
+    <div class="modal-content">
+        <div class="preview-header">
+            <div class="filename"></div>
+            <div class="preview-controls">
+                <button class="preview-button info-button"><img src="/web/assets/pv-info.svg" alt="Info"></button>
+                <button class="preview-button download-button"><img src="/web/assets/pv-download.svg" alt="Download"></button>
+                <button class="preview-button close-button"><img src="/web/assets/pv-close.svg" alt="Close"></button>
+            </div>
+        </div>
+        <div id="viewer-content"></div>
+        <div id="file-info" class="file-info hidden">
+            <h3>File Information</h3>
+            <p><strong>Path:</strong> <span id="file-path"></span></p>
+            <p><strong>Last Modified:</strong> <span id="file-modified"></span></p>
+            <p><strong>Size:</strong> <span id="file-size"></span></p>
+            <p><strong>Type:</strong> <span id="file-type"></span></p>
+        </div>
+    </div>
+</div>
+<script src="/web/js/main.js"></script>
+<script src="/web/js/upload.js"></script>
+<script src="/web/js/theme.js"></script>
+</body>
+</html>
