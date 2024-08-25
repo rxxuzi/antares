@@ -46,8 +46,7 @@
             <section class="folders">
                 <h2>Folders</h2>
                 <div class="grid">
-                    {{if ne .Path "/"}}
-                    <div class="item folder">
+                    <div class="item folder parent-dir" id="parent-dir-link">
                         <a href="..">
                             <div class="icon-name">
                                 <i class="fas fa-folder"></i>
@@ -55,7 +54,7 @@
                             </div>
                         </a>
                     </div>
-                    {{end}}
+
                     {{range .Files}}
                     {{if .IsDir}}
                     <div class="item folder">
