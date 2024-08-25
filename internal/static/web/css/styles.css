@@ -40,6 +40,8 @@ body, html {
     color: var(--text-color);
 }
 
+/* header */
+
 header {
     background: var(--secondary-color);
     height: var(--header-height);
@@ -68,6 +70,42 @@ header .breadcrumb {
     color: var(--item-color);
     opacity: 0.8;
 }
+
+.breadcrumb {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+}
+
+.breadcrumb-item {
+    margin-right: 10px;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+    content: ">";
+    margin-left: 10px;
+    color: var(--text-color);
+}
+
+.breadcrumb-item a {
+    text-decoration: none;
+    color: var(--sidebar-text);
+    transition: color 0.3s ease;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--accent-color);
+}
+
+.breadcrumb-item:last-child a {
+    color: var(--accent-color);
+    pointer-events: none;
+}
+
+/* wrapper */
 
 #wrapper {
     display: flex;
@@ -186,6 +224,7 @@ main {
 }
 
 /* サイドバーが閉じているときの項目のスタイル */
+
 .sidebar-closed .sidebar-nav li {
     padding: 15px 0;
     justify-content: center;
@@ -231,4 +270,59 @@ main {
 
 .theme-toggle {
     cursor: pointer;
+}
+
+/* Webkit browsers (Chrome, Safari, newer versions of Edge) */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--primary-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color);
+    filter: brightness(90%);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) var(--primary-color);
+}
+
+/* For Internet Explorer */
+body {
+    -ms-overflow-style: none;
+}
+
+/* Custom scrollbar for specific elements if needed */
+.scrollable-element {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) var(--primary-color);
+}
+
+.scrollable-element::-webkit-scrollbar {
+    width: 10px;
+}
+
+.scrollable-element::-webkit-scrollbar-track {
+    background: var(--primary-color);
+}
+
+.scrollable-element::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 5px;
+}
+
+.scrollable-element::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color);
+    filter: brightness(90%);
 }
