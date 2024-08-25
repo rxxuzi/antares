@@ -83,6 +83,7 @@ func antaresServer(root string, staticFS fs.FS) http.HandlerFunc {
 				}
 				return "fas fa-file"
 			},
+			"split": strings.Split,
 		}).Parse(string(tmplContent))
 
 		if err != nil {
@@ -144,7 +145,7 @@ func handleFileUpload(w http.ResponseWriter, r *http.Request, root string) {
 	http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
 }
 
-// rootHandler handles the root path and redirects to /a/
+// rootHandler handles the root path and redirects to /drive/
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
 		http.Redirect(w, r, PREFIX_DRIVE, http.StatusFound)

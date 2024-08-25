@@ -40,7 +40,18 @@
     <div id="content-wrapper">
         <header>
             <h1>Antares</h1>
-            <div class="breadcrumb">{{.Path}}</div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/drive/">home</a></li>
+                    {{$path := "/drive/"}}
+                    {{range $index, $element := split .Path "/"}}
+                    {{if and (ne $element "") (ne $element "drive")}}
+                    {{$path = printf "%s%s/" $path $element}}
+                    <li class="breadcrumb-item"><a href="{{$path}}">{{$element}}</a></li>
+                    {{end}}
+                    {{end}}
+                </ol>
+            </nav>
         </header>
         <main>
             <section class="folders">
