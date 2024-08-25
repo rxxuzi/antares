@@ -3,92 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Not Found</title>
+    <title>Antares - 404</title>
+    <script>
+        (function() {
+            const darkMode = localStorage.getItem('darkMode');
+            const sidebarClosed = localStorage.getItem('sidebarClosed') === 'true';
+            if (darkMode === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+            if (sidebarClosed) {
+                document.documentElement.classList.add('sidebar-closed');
+            }
+        })();
+    </script>
     <style>
-        :root {
-            --void: #6554ff;
-            --text-color: #ffffff;
-        }
-
-        html, body {
-            height: 100%;
-            font-family: Arial, sans-serif;
-            background: black;
-            color: white;
+        .error-container {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
-        }
-
-        .container {
-            position: absolute;
-            width: 100vmin;
-            height: 100vmin;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .hole {
-            position: absolute;
-            width: 60vmin;
-            height: 60vmin;
-            border-radius: 50%;
-            box-shadow: 0 0 70vmin 0 var(--void), 0 0 10vmin 0 #fff;
-        }
-
-        .hole:first-child {
-            animation: jiggle 0.5s infinite;
-        }
-        .hole:last-child {
-            animation: pulse 2s ease-out infinite alternate;
-        }
-
-        .txt {
-            position: absolute;
+            height: calc(100vh - var(--header-height));
             text-align: center;
-            width: 100%;
-            z-index: 1;
+            padding: 20px;
         }
-
-        h1 {
-            font-size: 5rem;
+        .error-code {
+            font-size: 120px;
+            color: var(--accent-color);
             margin: 0;
-            text-shadow: 0 0 10px var(--void);
+            line-height: 1;
         }
-
-        p {
-            font-size: 2rem;
-            margin: 1rem 0;
+        .error-message {
+            font-size: 36px;
+            color: var(--text-color);
+            margin: 20px 0 40px;
         }
-
-        a {
-            color: #a64dff;
+        .home-button {
+            font-size: 18px;
+            padding: 15px 30px;
+            background-color: var(--accent-color);
+            color: white;
             text-decoration: none;
-            font-size: 1.2rem;
-            transition: color 0.3s ease;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
-
-        a:hover {
-            color: var(--void);
-            text-decoration: underline;
-        }
-
-        @keyframes pulse {
-            from { box-shadow: 0 0 10vmin 0 var(--void), 0 0 2vmin 0 #fff; }
-            to { box-shadow: 0 0 100vmin 0 var(--void), 0 0 10vmin 0 #fff; }
+        .home-button:hover {
+            background-color: var(--hover-color);
         }
     </style>
+    <link rel="stylesheet" href="/web/css/styles.css">
+    <link rel="stylesheet" href="/web/css/preview.css">
+    <link rel="stylesheet" href="/web/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image" href="/web/favicon.ico">
 </head>
 <body>
-<div class="container">
-    <div class="hole"></div>
-    <div class="txt">
-        <h1>404</h1>
-        <p>Page Not Found</p>
-        <a href="/">Go to home</a>
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <div class="sidebar-header">
+            <button id="menu-toggle"><i class="fas fa-bars"></i></button>
+            <div class="sidebar-logo">
+                Antares
+            </div>
+        </div>
+        <ul class="sidebar-nav">
+            <li class="file-upload"><i class="fas fa-upload"></i><span>Upload</span></li>
+            <li class="share"><i class="fas fa-rocket"></i><span>Share</span></li>
+            <li class="theme-toggle"><i class="fas fa-moon"></i><span>Dark</span></li>
+        </ul>
+    </div>
+
+    <div id="content-wrapper">
+        <header>
+            <h1>Antares</h1>
+        </header>
+        <main>
+            <div class="error-container">
+                <h2 class="error-code">404</h2>
+                <p class="error-message">Oops! Page Not Found</p>
+                <a href="/" class="home-button">Return to Home</a>
+            </div>
+        </main>
     </div>
 </div>
+<script src="/web/js/theme.js"></script>
 </body>
 </html>
