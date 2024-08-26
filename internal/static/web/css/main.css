@@ -1,11 +1,4 @@
 /* main.css */
-main h2 {
-    font-size: 16px;
-    color: var(--item-color);
-    margin-bottom: 10px;
-    font-weight: normal;
-}
-
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

@@ -140,7 +140,7 @@
 
 .file-info p {
     margin: 5px 0;
-    color:#1a1a1a;
+    color:var(--text-color);
 }
 
 .hidden {

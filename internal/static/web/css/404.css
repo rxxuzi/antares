@@ -1,0 +1,64 @@
+/* 404.css */
+
+/* 404 Page Styles */
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+.error-code {
+    font-size: 120px;
+    font-weight: bold;
+    color: var(--accent-color);
+    margin: 0;
+}
+
+.error-message {
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+.home-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--accent-color);
+    color: var(--secondary-color);
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.home-button:hover {
+    background-color: var(--accent-color);
+    filter: brightness(90%);
+}
+
+/* Dark mode styles for 404 page */
+.dark-mode .error-container {
+    background-color: var(--primary-color);
+}
+
+.dark-mode .error-code {
+    color: var(--accent-color);
+}
+
+.dark-mode .error-message {
+    color: var(--text-color);
+}
+
+.dark-mode .home-button {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+}
+
+.dark-mode .home-button:hover {
+    background-color: var(--accent-color);
+    filter: brightness(110%);
+}

@@ -7,84 +7,21 @@
     <script>
         (function() {
             const darkMode = localStorage.getItem('darkMode');
-            const sidebarClosed = localStorage.getItem('sidebarClosed') === 'true';
             if (darkMode === 'dark') {
                 document.documentElement.classList.add('dark-mode');
             }
-            if (sidebarClosed) {
-                document.documentElement.classList.add('sidebar-closed');
-            }
         })();
     </script>
-    <style>
-        .error-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: calc(100vh - var(--header-height));
-            text-align: center;
-            padding: 20px;
-        }
-        .error-code {
-            font-size: 120px;
-            color: var(--accent-color);
-            margin: 0;
-            line-height: 1;
-        }
-        .error-message {
-            font-size: 36px;
-            color: var(--text-color);
-            margin: 20px 0 40px;
-        }
-        .home-button {
-            font-size: 18px;
-            padding: 15px 30px;
-            background-color: var(--accent-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .home-button:hover {
-            background-color: var(--hover-color);
-        }
-    </style>
     <link rel="stylesheet" href="/web/css/styles.css">
-    <link rel="stylesheet" href="/web/css/preview.css">
-    <link rel="stylesheet" href="/web/css/main.css">
+    <link rel="stylesheet" href="/web/css/404.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image" href="/web/favicon.ico">
 </head>
 <body>
-<div id="wrapper">
-    <div id="sidebar-wrapper">
-        <div class="sidebar-header">
-            <button id="menu-toggle"><i class="fas fa-bars"></i></button>
-            <div class="sidebar-logo">
-                Antares
-            </div>
-        </div>
-        <ul class="sidebar-nav">
-            <li class="file-upload"><i class="fas fa-upload"></i><span>Upload</span></li>
-            <li class="share"><i class="fas fa-rocket"></i><span>Share</span></li>
-            <li class="theme-toggle"><i class="fas fa-moon"></i><span>Dark</span></li>
-        </ul>
-    </div>
-
-    <div id="content-wrapper">
-        <header>
-            <h1>Antares</h1>
-        </header>
-        <main>
-            <div class="error-container">
-                <h2 class="error-code">404</h2>
-                <p class="error-message">Oops! Page Not Found</p>
-                <a href="/" class="home-button">Return to Home</a>
-            </div>
-        </main>
-    </div>
+<div class="error-container">
+    <h2 class="error-code">404</h2>
+    <p class="error-message">Oops! Page Not Found</p>
+    <a href="/" class="home-button">Return to Home</a>
 </div>
-<script src="/web/js/theme.js"></script>
 </body>
 </html>

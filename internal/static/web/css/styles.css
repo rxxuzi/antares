@@ -63,6 +63,7 @@ header h1 {
     color: var(--accent-color);
     font-weight: 600;
     margin: 0 20px 0 0;
+    cursor: pointer;
 }
 
 header .breadcrumb {
@@ -92,7 +93,7 @@ header .breadcrumb {
 
 .breadcrumb-item a {
     text-decoration: none;
-    color: var(--sidebar-text);
+    color: var(--text-color);
     transition: color 0.3s ease;
 }
 
@@ -184,12 +185,20 @@ header .breadcrumb {
     font-weight: bold;
 }
 
+/* main style */
 main {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
     margin-top: var(--header-height);
     background-color: var(--primary-color);
+}
+
+main h2 {
+    font-size: 16px;
+    color: var(--item-color);
+    margin-bottom: 10px;
+    font-weight: normal;
 }
 
 .sidebar-nav {
