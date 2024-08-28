@@ -28,6 +28,11 @@ func CreateServer(config *Config) (*http.Server, error) {
 	fileServer := http.FileServer(http.FS(staticFS))
 	mux.Handle("/web/", http.StripPrefix("/web/", fileServer))
 
+	// 検索ハンドラー
+	mux.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
+		searchHandler(w, r, config.RootDir, staticFS)
+	})
+
 	antares := antaresServer(config.RootDir, staticFS)
 	mux.Handle(PREFIX_DRIVE, http.StripPrefix(PREFIX_DRIVE, antares))
 

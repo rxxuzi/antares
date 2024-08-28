@@ -17,6 +17,11 @@ func antaresServer(root string, staticFS fs.FS) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		path := filepath.Join(root, filepath.Clean(r.URL.Path))
 
+		if r.URL.Path == "/search" {
+			searchHandler(w, r, root, staticFS)
+			return
+		}
+
 		if r.Method == "POST" {
 			handleFileUpload(w, r, root)
 			return

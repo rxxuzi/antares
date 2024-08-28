@@ -70,12 +70,14 @@
 }
 
 .thumbnail {
-    width: 100%;
+    max-width: 100%;
+    align-items: center;
     height: calc(100% - 30px);
     object-fit: cover;
     position: absolute;
     top: 0;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* フォルダー固有のスタイル */

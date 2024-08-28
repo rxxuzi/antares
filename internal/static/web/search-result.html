@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antares: {{.CurrentPath}}</title>
+    <title>Search Results - {{.Query}}</title>
     <script>
         (function() {
             const darkMode = localStorage.getItem('darkMode');
@@ -42,79 +42,40 @@
     <div id="content-wrapper">
         <header>
             <h1 id="logo">Antares</h1>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/drive/">home</a></li>
-                    {{$path := "/drive/"}}
-                    {{range $index, $element := split .Path "/"}}
-                    {{if and (ne $element "") (ne $element "drive")}}
-                    {{$path = printf "%s%s/" $path $element}}
-                    <li class="breadcrumb-item"><a href="{{$path}}">{{$element}}</a></li>
-                    {{end}}
-                    {{end}}
-                </ol>
-            </nav>
+            <p>Results for: {{.Query}}</p>
         </header>
+
         <main>
-            <section class="folders">
-                <h2>Folders</h2>
+            <section class="search-results">
+                <h2>Files and Folders</h2>
                 <div class="grid">
-                    <div class="item folder parent-dir" id="parent-dir-link">
-                        <a href="..">
-                            <div class="icon-name">
-                                <i class="fas fa-folder"></i>
-                                <span>..</span>
-                            </div>
-                        </a>
-                    </div>
-
-                    {{range .Files}}
-                    {{if .IsDir}}
-                    <div class="item folder">
-                        <a href="{{.Name}}/">
-                            <div class="icon-name">
-                                <i class="fas fa-folder"></i>
-                                <span title="{{.Name}}">{{truncate .Name 20}}</span>
-                            </div>
-                        </a>
-                    </div>
-                    {{end}}
-                    {{end}}
+                    {{range .Results}}
+                    <div class="item {{if eq .Type "folder"}}folder{{else}}file {{.Type}}{{end}}">
+                    <a href="/drive/{{.Path}}" class="file-link" data-filename="{{.Name}}" data-size="{{formatSize .Size}}" data-modified="{{formatTime .ModTime}}">
+                        <div class="icon-name">
+                            {{if isImage .Name}}
+                            <img src="/drive/{{.Path}}" alt="{{.Name}}" class="thumbnail">
+                            {{else if isVideo .Name}}
+                            <video src="/drive/{{.Path}}" class="thumbnail" preload="metadata"></video>
+                            {{else}}
+                            <i class="{{getFileIcon .Name .Type}}"></i>
+                            {{end}}
+                            <span title="{{.Name}}">{{truncate .Name 20}}</span>
+                        </div>
+                    </a>
                 </div>
-            </section>
-
-            <section class="files">
-                <h2>Files</h2>
-                <div class="grid">
-                    {{range .Files}}
-                    {{if not .IsDir}}
-                    <div class="item file {{.Type}}">
-                        <a href="{{.Name}}" class="file-link" data-filename="{{.Name}}" data-size="{{formatSize .Size}}" data-modified="{{formatTime .ModTime}}">
-                            <div class="icon-name">
-                                {{if isImage .Name}}
-                                <img src="{{.Name}}" alt="{{.Name}}" class="thumbnail">
-                                {{else if isVideo .Name}}
-                                <video src="{{.Name}}" class="thumbnail" preload="metadata"></video>
-                                {{else}}
-                                <i class="fas {{getFileIcon .Name}}"></i>
-                                {{end}}
-                                <span title="{{.Name}}">{{truncate .Name 20}}</span>
-                            </div>
-                        </a>
-                    </div>
-                    {{end}}
-                    {{end}}
-                </div>
+                {{end}}
             </section>
         </main>
     </div>
 </div>
 
+
 <div id="search-modal" class="modal">
     <div class="modal-content">
         <h2>Search Files</h2>
         <div class="search-container">
-            <label for="search-input"></label><input type="text" id="search-input" placeholder="Enter search query">
+            <input type="text" id="search-input" placeholder="Enter search query">
             <button id="search-submit">Search</button>
         </div>
         <div id="search-results"></div>
@@ -141,10 +102,9 @@
         </div>
     </div>
 </div>
+
 <script src="/web/js/main.js"></script>
-<script src="/web/js/upload.js"></script>
 <script src="/web/js/theme.js"></script>
 <script src="/web/js/search.js"></script>
-<script src="/web/js/link.js"></script>
 </body>
 </html>
