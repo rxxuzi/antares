@@ -174,6 +174,11 @@ func searchFiles(root string, query SearchQuery, caseSensitive bool) ([]SearchRe
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
+			if os.IsPermission(err) {
+				// Skip directories with permission errors
+				fmt.Printf("Skipping inaccessible path: %s\n", path)
+				return filepath.SkipDir
+			}
 			return err
 		}
 
@@ -200,7 +205,11 @@ func searchFiles(root string, query SearchQuery, caseSensitive bool) ([]SearchRe
 		return nil
 	})
 
+	if err != nil && !os.IsPermission(err) {
+		return nil, err
+	}
+
 	fmt.Printf("Query: %+v, Results count: %d\n", query, len(results))
 
-	return results, err
+	return results, nil
 }
