@@ -70,15 +70,29 @@
     </div>
 </div>
 
-
 <div id="search-modal" class="modal">
     <div class="modal-content">
         <h2>Search Files</h2>
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="Enter search query">
+            <label for="search-input"></label><input type="text" id="search-input" placeholder="Enter search query">
             <button id="search-submit">Search</button>
         </div>
-        <div id="search-results"></div>
+        <div class="search-options">
+            <div class="case-sensitivity">
+                <span>Case Sensitive</span>
+                <label class="switch">
+                    <input type="checkbox" id="case-sensitive-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="use-regex">
+                <span>Use Regex</span>
+                <label class="switch">
+                    <input type="checkbox" id="use-regex-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
     </div>
 </div>
 

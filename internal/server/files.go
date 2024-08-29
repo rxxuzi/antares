@@ -22,7 +22,7 @@ type FileInfo struct {
 
 func isImage(filename string) bool {
 	ext := strings.ToLower(filepath.Ext(filename))
-	return ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif" || ext == ".webp"
+	return ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".gif" || ext == ".webp" || ext == ".jfif"
 }
 
 func GetFileIcon(filename string, fileType string) string {
@@ -89,7 +89,7 @@ func GetFileType(filename string, root string) string {
 		return "document"
 	case ".exe", ".app", ".out", ".run", ".bin":
 		return "executable"
-	case ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp":
+	case ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp", ".jfif":
 		return "image"
 	case ".pdf":
 		return "pdf"

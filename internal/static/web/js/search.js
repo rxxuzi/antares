@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchModal = document.getElementById('search-modal');
     const searchInput = document.getElementById('search-input');
     const searchSubmit = document.getElementById('search-submit');
+    const caseSensitiveToggle = document.getElementById('case-sensitive-toggle');
+    const useRegexToggle = document.getElementById('use-regex-toggle');
 
     searchButton.addEventListener('click', (e) => {
         e.preventDefault();
@@ -20,7 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function performSearch() {
         const query = searchInput.value.trim();
         if (query) {
-            window.location.href = `/search?q=${encodeURIComponent(query)}`;
+            let searchUrl = '/search?';
+            if (useRegexToggle.checked) searchUrl += 'r&';
+            if (caseSensitiveToggle.checked) searchUrl += 'c&';
+            searchUrl += `q=${encodeURIComponent(query)}`;
+            window.location.href = searchUrl;
         }
     }
 

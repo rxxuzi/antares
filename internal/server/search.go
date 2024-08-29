@@ -6,8 +6,10 @@ import (
 	"html/template"
 	"io/fs"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -26,13 +28,22 @@ type SearchResultPage struct {
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request, root string, staticFS fs.FS) {
-	query := r.URL.Query().Get("q")
+	query, err := url.QueryUnescape(r.URL.Query().Get("q"))
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid query: %v", err), http.StatusBadRequest)
+		return
+	}
+	useRegex := r.URL.Query().Get("r") == "true" || r.URL.Query().Has("r")
+	caseSensitive := r.URL.Query().Get("c") == "true" || r.URL.Query().Has("c")
+
 	if query == "" {
 		http.Error(w, "Query parameter 'q' is required", http.StatusBadRequest)
 		return
 	}
 
-	results, err := searchFiles(root, query)
+	fmt.Printf("Received query: %s, Regex: %v, Case Sensitive: %v\n", query, useRegex, caseSensitive)
+
+	results, err := searchFiles(root, query, caseSensitive, useRegex)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error searching files: %v", err), http.StatusInternalServerError)
 		return
@@ -78,8 +89,35 @@ func searchHandler(w http.ResponseWriter, r *http.Request, root string, staticFS
 	}
 }
 
-func searchFiles(root, query string) ([]SearchResult, error) {
+func searchFiles(root, query string, caseSensitive, useRegex bool) ([]SearchResult, error) {
 	var results []SearchResult
+	var matcher func(string) bool
+
+	if useRegex {
+		var regexFlags string
+		if !caseSensitive {
+			regexFlags = "(?i)"
+		}
+		// Escape the query if it's not already a valid regex
+		if _, err := regexp.Compile(query); err != nil {
+			query = regexp.QuoteMeta(query)
+		}
+		re, err := regexp.Compile(regexFlags + query)
+		if err != nil {
+			return nil, fmt.Errorf("invalid regex: %v", err)
+		}
+		matcher = re.MatchString
+	} else {
+		if !caseSensitive {
+			query = strings.ToLower(query)
+		}
+		matcher = func(s string) bool {
+			if !caseSensitive {
+				s = strings.ToLower(s)
+			}
+			return strings.Contains(s, query)
+		}
+	}
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -95,7 +133,7 @@ func searchFiles(root, query string) ([]SearchResult, error) {
 			return err
 		}
 
-		if strings.Contains(strings.ToLower(info.Name()), strings.ToLower(query)) {
+		if matcher(info.Name()) {
 			fileType := GetFileType(info.Name(), root)
 			results = append(results, SearchResult{
 				Name:    info.Name(),
