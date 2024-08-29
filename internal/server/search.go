@@ -27,12 +27,91 @@ type SearchResultPage struct {
 	Results []SearchResult
 }
 
+type SearchCondition struct {
+	Term    string
+	IsRegex bool
+	IsNot   bool
+}
+
+type SearchQuery struct {
+	Conditions []SearchCondition
+	IsOr       bool
+}
+
+func parseQuery(query string, useRegex bool) SearchQuery {
+	terms := strings.Fields(query)
+	var sq SearchQuery
+	sq.IsOr = false
+
+	for i := 0; i < len(terms); i++ {
+		term := terms[i]
+
+		if strings.EqualFold(term, "OR") || term == "||" {
+			sq.IsOr = true
+			continue
+		}
+
+		if strings.EqualFold(term, "AND") || term == "&&" {
+			continue
+		}
+
+		condition := SearchCondition{
+			Term:    term,
+			IsRegex: useRegex,
+			IsNot:   false,
+		}
+
+		if strings.HasPrefix(term, "NOT") || strings.HasPrefix(term, "!!") {
+			condition.IsNot = true
+			condition.Term = strings.TrimPrefix(strings.TrimPrefix(term, "NOT"), "!!")
+		}
+
+		sq.Conditions = append(sq.Conditions, condition)
+	}
+	return sq
+}
+
+func (sq SearchQuery) match(filename string, caseSensitive bool) bool {
+	matchCount := 0
+
+	for _, condition := range sq.Conditions {
+		matches := false
+		if condition.IsRegex {
+			re, err := regexp.Compile(condition.Term)
+			if err == nil {
+				matches = re.MatchString(filename)
+			}
+		} else {
+			if !caseSensitive {
+				filename = strings.ToLower(filename)
+				condition.Term = strings.ToLower(condition.Term)
+			}
+			matches = strings.Contains(filename, condition.Term)
+		}
+
+		if condition.IsNot {
+			matches = !matches
+		}
+
+		if matches {
+			matchCount++
+		}
+
+		if sq.IsOr && matches {
+			return true
+		}
+	}
+
+	return !sq.IsOr && matchCount == len(sq.Conditions)
+}
+
 func searchHandler(w http.ResponseWriter, r *http.Request, root string, staticFS fs.FS) {
 	query, err := url.QueryUnescape(r.URL.Query().Get("q"))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Invalid query: %v", err), http.StatusBadRequest)
 		return
 	}
+
 	useRegex := r.URL.Query().Get("r") == "true" || r.URL.Query().Has("r")
 	caseSensitive := r.URL.Query().Get("c") == "true" || r.URL.Query().Has("c")
 
@@ -41,13 +120,14 @@ func searchHandler(w http.ResponseWriter, r *http.Request, root string, staticFS
 		return
 	}
 
-	fmt.Printf("Received query: %s, Regex: %v, Case Sensitive: %v\n", query, useRegex, caseSensitive)
-
-	results, err := searchFiles(root, query, caseSensitive, useRegex)
+	searchQuery := parseQuery(query, useRegex)
+	results, err := searchFiles(root, searchQuery, caseSensitive)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error searching files: %v", err), http.StatusInternalServerError)
 		return
 	}
+
+	fmt.Printf("Received query: %s, Regex: %v, Case Sensitive: %v\n", query, useRegex, caseSensitive)
 
 	// Check if the client wants JSON (e.g., for AJAX requests)
 	if r.Header.Get("Accept") == "application/json" {
@@ -89,35 +169,8 @@ func searchHandler(w http.ResponseWriter, r *http.Request, root string, staticFS
 	}
 }
 
-func searchFiles(root, query string, caseSensitive, useRegex bool) ([]SearchResult, error) {
+func searchFiles(root string, query SearchQuery, caseSensitive bool) ([]SearchResult, error) {
 	var results []SearchResult
-	var matcher func(string) bool
-
-	if useRegex {
-		var regexFlags string
-		if !caseSensitive {
-			regexFlags = "(?i)"
-		}
-		// Escape the query if it's not already a valid regex
-		if _, err := regexp.Compile(query); err != nil {
-			query = regexp.QuoteMeta(query)
-		}
-		re, err := regexp.Compile(regexFlags + query)
-		if err != nil {
-			return nil, fmt.Errorf("invalid regex: %v", err)
-		}
-		matcher = re.MatchString
-	} else {
-		if !caseSensitive {
-			query = strings.ToLower(query)
-		}
-		matcher = func(s string) bool {
-			if !caseSensitive {
-				s = strings.ToLower(s)
-			}
-			return strings.Contains(s, query)
-		}
-	}
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -133,7 +186,7 @@ func searchFiles(root, query string, caseSensitive, useRegex bool) ([]SearchResu
 			return err
 		}
 
-		if matcher(info.Name()) {
+		if query.match(info.Name(), caseSensitive) {
 			fileType := GetFileType(info.Name(), root)
 			results = append(results, SearchResult{
 				Name:    info.Name(),
@@ -146,6 +199,8 @@ func searchFiles(root, query string, caseSensitive, useRegex bool) ([]SearchResu
 
 		return nil
 	})
+
+	fmt.Printf("Query: %+v, Results count: %d\n", query, len(results))
 
 	return results, err
 }
