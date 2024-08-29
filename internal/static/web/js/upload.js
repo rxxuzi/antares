@@ -1,6 +1,8 @@
+// Elements
+const uploadListItem = document.querySelector('.file-upload');
+const fileInput = document.createElement('input');
+
 document.addEventListener('DOMContentLoaded', function() {
-    const uploadListItem = document.querySelector('.file-upload');
-    const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.style.display = 'none';
     document.body.appendChild(fileInput);

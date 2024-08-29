@@ -1,3 +1,4 @@
+// Elements
 const fileLinks = document.querySelectorAll('.file-link');
 const preview = document.getElementById('preview');
 const viewerContent = document.getElementById('viewer-content');
@@ -13,75 +14,17 @@ const fileType = document.getElementById('file-type');
 const logo = document.getElementById('logo');
 
 document.addEventListener('DOMContentLoaded', () => {
-
     let currentFile = null;
     let currentFileIndex = -1;
+    // main.js の該当部分を以下のように修正します
 
-    fileLinks.forEach((link, index) => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            currentFileIndex = index;
-            openPreview(link);
-        });
-    });
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
 
-    closeBtn.addEventListener('click', closePreview);
 
-    downloadBtn.addEventListener('click', () => {
-        if (currentFile) {
-            const link = document.createElement('a');
-            link.href = currentFile.path;
-            link.download = currentFile.name;
-            link.click();
-        }
-    });
-
-    infoBtn.addEventListener('click', () => {
-        if (currentFile) {
-            filePath.textContent = currentFile.path;
-            fileModified.textContent = currentFile.modified;
-            fileSize.textContent = currentFile.size;
-            fileType.textContent = currentFile.type;
-            fileInfo.classList.toggle('hidden');
-        }
-    });
-
-    viewerContent.addEventListener('click', (e) => {
-        if (e.target === viewerContent) {
-            closePreview();
-        }
-    });
-
-    logo.addEventListener('click', (e) => {
-        location.href='/'
-    })
-
-    document.addEventListener('keydown', (e) => {
-        if (preview.style.display === 'block') {
-            if (e.key === 'ArrowRight') {
-                e.preventDefault();
-                showNextFile();
-            } else if (e.key === 'ArrowLeft') {
-                e.preventDefault();
-                showPreviousFile();
-            }
-        }
-    });
-
-    function showNextFile() {
-        if (currentFileIndex < fileLinks.length - 1) {
-            currentFileIndex++;
-            openPreview(fileLinks[currentFileIndex]);
-        }
-    }
-
-    function showPreviousFile() {
-        if (currentFileIndex > 0) {
-            currentFileIndex--;
-            openPreview(fileLinks[currentFileIndex]);
-        }
-    }
-
+    // Functions
     function openPreview(link) {
         const file = link.getAttribute('data-filename');
         if (!file) {
@@ -102,8 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
         filename.textContent = file;
 
         updatePreviewContent(fileType, fileExtension, link.href);
-
         preview.style.display = 'block';
+        document.body.classList.add('preview-active');
+
+        document.querySelector('.preview-header').style.display = 'flex';
         fileInfo.classList.add('hidden');
     }
 
@@ -141,11 +86,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closePreview() {
         preview.style.display = 'none';
+        document.body.classList.remove('preview-active');
         viewerContent.innerHTML = '';
+
+        document.querySelector('.preview-header').style.display = 'none';
         fileInfo.classList.add('hidden');
         currentFile = null;
         currentFileIndex = -1;
     }
+
 
     function escapeHtml(unsafe) {
         return unsafe
@@ -155,4 +104,89 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
     }
+
+    function showNextFile() {
+        if (currentFileIndex < fileLinks.length - 1) {
+            currentFileIndex++;
+            openPreview(fileLinks[currentFileIndex]);
+        }
+    }
+
+    function showPreviousFile() {
+        if (currentFileIndex > 0) {
+            currentFileIndex--;
+            openPreview(fileLinks[currentFileIndex]);
+        }
+    }
+
+    function handleSwipe() {
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+
+        // 縦方向のスワイプの方が大きい場合は、ファイル切り替えを行わない
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+            return;
+        }
+
+        if (deltaX < -50) showNextFile();
+        if (deltaX > 50) showPreviousFile();
+    }
+
+    // Event Listeners
+    viewerContent.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    });
+
+    viewerContent.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+    });
+
+    fileLinks.forEach((link, index) => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentFileIndex = index;
+            openPreview(link);
+        });
+    });
+    closeBtn.addEventListener('click', closePreview);
+    downloadBtn.addEventListener('click', () => {
+        if (currentFile) {
+            const link = document.createElement('a');
+            link.href = currentFile.path;
+            link.download = currentFile.name;
+            link.click();
+        }
+    });
+    infoBtn.addEventListener('click', () => {
+        if (currentFile) {
+            filePath.textContent = currentFile.path;
+            fileModified.textContent = currentFile.modified;
+            fileSize.textContent = currentFile.size;
+            fileType.textContent = currentFile.type;
+            fileInfo.classList.toggle('hidden');
+        }
+    });
+    viewerContent.addEventListener('click', (e) => {
+        if (e.target === viewerContent) closePreview();
+    });
+    logo.addEventListener('click', () => location.href = '/');
+    document.addEventListener('keydown', (e) => {
+        if (preview.style.display === 'block') {
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                showNextFile();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                showPreviousFile();
+            }
+        }
+    });
+
+    // Initialization
+    const savedTheme = localStorage.getItem('darkMode');
+    const isDarkMode = savedTheme === 'dark';
+    if (isDarkMode) document.documentElement.classList.add('dark-mode');
 });

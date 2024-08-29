@@ -18,9 +18,12 @@
 
     --item-width: 200px;
 
-    --folder-height: 50px;
-    --file-height: 200px;
+    --folder-height: calc(var(--item-width) / 4);
+    --file-height: calc(var(--item-width) / 1);
     --thumbnail-height: 85%;
+
+    --vh: 1vh;
+    --pc: 769px;
 }
 
 .dark-mode {
@@ -38,9 +41,10 @@ body, html {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    height: 100%;
+    height: calc(var(--vh, 1vh) * 100);
     overflow: hidden;
     color: var(--text-color);
+    background-color: var(--primary-color);
 }
 
 /* header */
@@ -343,4 +347,176 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(var(--item-width), 1fr));
     gap: 16px;
+}
+
+/* For mobile */
+@media (max-width: 768px) {
+    :root {
+        --sidebar-width: 0;
+        --item-width: calc(50% - 8px);
+        --folder-height: 50px;
+        --file-height: 100px;
+        --mobile-header-height: 50px;
+    }
+
+    #sidebar-wrapper {
+        position: fixed;
+        left: -100%;
+        width: 80%;
+        height: 100%;
+        z-index: 1001;
+        transition: left 0.3s ease-in-out;
+    }
+
+    #sidebar-wrapper.active {
+        left: 0;
+    }
+
+    #content-wrapper {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    header {
+        left: 0;
+        padding-left: 60px;
+        height: var(--mobile-header-height);
+        width: 100%;
+    }
+
+    header h1 {
+        font-size: 20px;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .item {
+        height: auto;
+    }
+
+    .folder {
+        height: var(--folder-height);
+    }
+
+    .file {
+        height: var(--file-height);
+    }
+
+    .item span {
+        font-size: 10px;
+    }
+
+    .item i {
+        font-size: 36px;
+    }
+
+    #menu-toggle {
+        position: fixed;
+        z-index: 1002;
+        background: var(--sidebar-bg);
+        width: var(--mobile-header-height);
+        height: var(--mobile-header-height);
+    }
+
+    main {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .breadcrumb {
+        display: none;
+    }
+
+    #sidebar-wrapper.mobile-active {
+        left: 0;
+    }
+
+    #content-wrapper.mobile-pushed {
+        margin-left: 80%;
+    }
+
+    .sidebar-closed #sidebar-wrapper {
+        left: -100%;
+    }
+
+    .sidebar-closed #content-wrapper {
+        margin-left: 0;
+    }
+
+    .sidebar-logo {
+        padding-left: var(--mobile-header-height);
+    }
+
+    /* For preview */
+    #preview {
+        z-index: 1004;
+    }
+
+    #preview .modal-content {
+        margin-top: 0;
+        height: 100vh;
+        width: 100vw;
+    }
+
+    /* プレビュー表示時のメニュートグルのスタイル */
+    body.preview-active #menu-toggle {
+        top: auto;
+        bottom: 10px;
+        left: 10px;
+        opacity: 0.5;
+    }
+
+    /* プレビュー表示時のヘッダースタイル */
+    body.preview-active .preview-header {
+        z-index: 2005;
+    }
+
+    #sidebar-wrapper {
+        width: 80%;
+        left: -80%;
+    }
+
+    #sidebar-wrapper.mobile-active {
+        left: 0;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        padding: 20px 0;
+    }
+
+    .sidebar-nav li {
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar-nav li i {
+        margin-right: 10px;
+    }
+
+    .sidebar-nav li span {
+        display: inline-block;
+    }
+}
+
+/* For PC */
+@media (min-width: var(--pc)) {
+    .sidebar-closed #sidebar-wrapper {
+        width: var(--toggle-width);
+    }
+
+    .sidebar-closed #content-wrapper {
+        margin-left: var(--toggle-width);
+    }
+
+    .sidebar-closed #content-wrapper header {
+        left: var(--toggle-width);
+    }
 }
