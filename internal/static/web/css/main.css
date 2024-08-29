@@ -1,9 +1,4 @@
 /* main.css */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-}
 
 /* アイテムのスタイル */
 .item {
@@ -72,7 +67,7 @@
 .thumbnail {
     max-width: 100%;
     align-items: center;
-    height: calc(100% - 30px);
+    height: var(--thumbnail-height);
     object-fit: cover;
     position: absolute;
     top: 0;

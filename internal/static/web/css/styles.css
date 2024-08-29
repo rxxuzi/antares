@@ -16,8 +16,11 @@
     --sidebar-width: 260px;
     --toggle-width: 60px;
 
+    --item-width: 200px;
+
     --folder-height: 50px;
     --file-height: 200px;
+    --thumbnail-height: 85%;
 }
 
 .dark-mode {
@@ -334,4 +337,10 @@ body {
 .scrollable-element::-webkit-scrollbar-thumb:hover {
     background: var(--accent-color);
     filter: brightness(90%);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--item-width), 1fr));
+    gap: 16px;
 }
