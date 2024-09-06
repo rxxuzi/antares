@@ -54,16 +54,16 @@ function handleRightClick(e) {
     const link = item.querySelector('a');
 
     currentFileInfo = {
-        name: link.getAttribute('filename'),
+        name: link.getAttribute('filename') || link.textContent.trim(),
         path: link.getAttribute('href'),
-        type: item.classList[2],
+        type: item.classList.contains('folder') ? 'folder' : 'file',
         size: link.getAttribute('data-size'),
         modified: link.getAttribute('data-modified')
     };
 
     closeAllModals();
 
-    if (item.classList.contains('folder')) {
+    if (currentFileInfo.type === 'folder') {
         showModal(folderActionModal, e.clientX, e.clientY);
     } else {
         showModal(actionModal, e.clientX, e.clientY);
@@ -90,10 +90,95 @@ function handleDownload() {
     closeAllModals();
 }
 
+
 function handleRename() {
     console.log('Renaming:', currentFileInfo.name);
-    // TODO: 実際のリネーム処理を実装
-    closeAllModals();
+    showRenameModal(currentFileInfo);
+}
+
+function handleRenameFolder() {
+    console.log('Renaming folder:', currentFileInfo.name);
+    showRenameModal(currentFileInfo);
+}
+
+function showRenameModal(fileInfo) {
+    const renameModal = document.createElement('div');
+    renameModal.className = 'action-modal';
+    renameModal.innerHTML = `
+        <div class="modal-content">
+            <h3>Rename ${fileInfo.type === 'folder' ? 'Folder' : 'File'}</h3>
+            <input type="text" id="new-name-input" value="${fileInfo.name}" />
+            <div class="button-group">
+                <button class="action-confirm">Rename</button>
+                <button class="action-cancel">Cancel</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(renameModal);
+
+    const newNameInput = renameModal.querySelector('#new-name-input');
+    const confirmButton = renameModal.querySelector('.action-confirm');
+    const cancelButton = renameModal.querySelector('.action-cancel');
+
+    newNameInput.focus();
+    newNameInput.setSelectionRange(0, newNameInput.value.lastIndexOf('.'));
+
+    function closeModal() {
+        document.body.removeChild(renameModal);
+    }
+
+    confirmButton.addEventListener('click', () => {
+        const newName = newNameInput.value;
+        if (newName && newName !== fileInfo.name) {
+            renameFile(fileInfo, newName);
+        }
+        closeModal();
+    });
+
+    cancelButton.addEventListener('click', closeModal);
+    renameModal.addEventListener('click', (event) => {
+        if (event.target === renameModal) {
+            closeModal();
+        }
+    });
+
+    renameModal.style.display = 'block';
+}
+
+async function renameFile(fileInfo, newName) {
+    const currentPath = window.location.pathname.replace(PREFIX_DRIVE, '');
+    const oldPath = currentPath + fileInfo.name;
+    const newPath = currentPath + newName;
+
+    console.log('Renaming:', oldPath, 'to', newPath);
+
+    try {
+        const response = await fetch('/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                file: fileInfo.type !== 'folder',
+                type: 'rename',
+                path: oldPath,
+                dst: newPath
+            })
+        });
+
+        const data = await response.json();
+        console.log('Server response:', data);
+
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(`An error occurred while renaming: ${error.message}`);
+    }
 }
 
 function handleCopy() {
@@ -124,12 +209,6 @@ function handleDelete() {
 }
 
 // Folder Action Handlers
-function handleRenameFolder() {
-    console.log('Renaming folder:', currentFileInfo.name);
-    // TODO: フォルダーのリネーム処理を実装
-    closeAllModals();
-}
-
 function handleMoveFolder() {
     console.log('Moving folder:', currentFileInfo.name);
     // TODO: フォルダーの移動処理を実装
@@ -149,7 +228,7 @@ function showFileInfo(fileInfo) {
     const infoModal = document.createElement('div');
     infoModal.className = 'modal';
     infoModal.innerHTML = `
-        <div class="modal-content">
+        <div class="modal-content modal">
             <h3>File Information</h3>
             <p><strong>Name:</strong> ${fileInfo.name}</p>
             <p><strong>Type:</strong> ${fileInfo.type}</p>

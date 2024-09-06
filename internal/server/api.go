@@ -117,8 +117,34 @@ func handleCopy(w http.ResponseWriter, req APIRequest, root string) {
 }
 
 func handleRename(w http.ResponseWriter, req APIRequest, root string) {
-	// TODO: Implement
-	sendJSONResponse(w, false, "Rename operation not implemented yet", ErrOperationFailed, http.StatusNotImplemented)
+	if req.Path == "" || req.Dst == "" {
+		sendJSONResponse(w, false, "Both source and destination paths are required", ErrMissingPath, http.StatusBadRequest)
+		return
+	}
+
+	srcPath := filepath.Join(root, filepath.Clean(req.Path))
+	dstPath := filepath.Join(root, filepath.Clean(req.Dst))
+
+	log.Printf("src -> %s\n", srcPath)
+	log.Printf("dst -> %s\n", dstPath)
+
+	if !strings.HasPrefix(srcPath, root) || !strings.HasPrefix(dstPath, root) {
+		sendJSONResponse(w, false, "Invalid file path", ErrInvalidPath, http.StatusBadRequest)
+		return
+	}
+
+	if _, err := os.Stat(srcPath); os.IsNotExist(err) {
+		sendJSONResponse(w, false, "Source file or folder not found", ErrFileNotFound, http.StatusNotFound)
+		return
+	}
+
+	if err := os.Rename(srcPath, dstPath); err != nil {
+		log.Printf("Failed to rename: %v", err)
+		sendJSONResponse(w, false, fmt.Sprintf("Failed to rename: %v", err), ErrOperationFailed, http.StatusInternalServerError)
+		return
+	}
+
+	sendJSONResponse(w, true, fmt.Sprintf("Successfully renamed from %s to %s", req.Path, req.Dst), "", http.StatusOK)
 }
 
 func sendJSONResponse(w http.ResponseWriter, success bool, message string, errorCode string, statusCode int) {
