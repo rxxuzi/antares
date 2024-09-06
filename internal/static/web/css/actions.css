@@ -1,0 +1,72 @@
+/* actions.css */
+#action-modal, #folder-action-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    background-color: var(--secondary-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    font-size: 16px;
+    min-width: 200px;
+    max-width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#action-modal::-webkit-scrollbar, #folder-action-modal::-webkit-scrollbar {
+    display: none;
+}
+
+.modal-content {
+    padding: 10px 0;
+}
+
+#action-modal h3, #folder-action-modal h3 {
+    font-size: 18px;
+    margin: 0;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    text-align: left;
+}
+
+#action-list, #folder-action-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#action-list li, #folder-action-list li {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+#action-list li:hover, #folder-action-list li:hover {
+    background-color: var(--hover-color);
+}
+
+#action-list li:hover i, #folder-action-list li:hover i {
+    color: var(--accent-color);
+}
+
+#action-list li i, #folder-action-list li i {
+    margin-right: 12px;
+    width: 20px;
+    text-align: center;
+    font-size: 18px;
+    color: var(--text-color);
+    transition: color 0.2s;
+}
+
+.item.selected {
+    outline: 2px solid var(--accent-color);
+}
+
+.selection-mode .item {
+    cursor: pointer;
+}

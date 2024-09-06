@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="/web/css/preview.css">
     <link rel="stylesheet" href="/web/css/main.css">
     <link rel="stylesheet" href="/web/css/search.css">
+    <link rel="stylesheet" href="/web/css/actions.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image" href="/web/favicon.ico">
 </head>
@@ -157,10 +158,36 @@
         </div>
     </div>
 </div>
+
+<div id="action-modal" class="modal">
+    <div class="modal-content">
+        <h3>File Actions</h3>
+        <ul id="action-list">
+            <li id="action-download"><i class="fas fa-download"></i>Download</li>
+            <li id="action-rename"><i class="fas fa-edit"></i>Rename</li>
+            <li id="action-copy"><i class="fas fa-copy"></i>Copy</li>
+            <li id="action-move"><i class="fas fa-arrows-alt"></i>Move</li>
+            <li id="action-info"><i class="fas fa-info-circle"></i>Info</li>
+            <li id="action-delete"><i class="fas fa-trash-alt"></i>Delete</li>
+        </ul>
+    </div>
+</div>
+<div id="folder-action-modal" class="modal">
+    <div class="modal-content">
+        <h3>Folder Actions</h3>
+        <ul id="folder-action-list">
+            <li id="folder-action-rename"><i class="fas fa-edit"></i>Rename</li>
+            <li id="folder-action-move"><i class="fas fa-arrows-alt"></i>Move</li>
+            <li id="folder-action-delete"><i class="fas fa-trash-alt"></i>Delete</li>
+        </ul>
+    </div>
+</div>
+
 <script src="/web/js/main.js"></script>
 <script src="/web/js/upload.js"></script>
 <script src="/web/js/theme.js"></script>
 <script src="/web/js/search.js"></script>
 <script src="/web/js/link.js"></script>
+<script src="/web/js/actions.js"></script>
 </body>
 </html>
