@@ -1,4 +1,6 @@
 // Elements
+const PREFIX_DRIVE = '/drive/';
+
 const fileLinks = document.querySelectorAll('.file-link');
 const preview = document.getElementById('preview');
 const viewerContent = document.getElementById('viewer-content');
@@ -12,6 +14,7 @@ const fileModified = document.getElementById('file-modified');
 const fileSize = document.getElementById('file-size');
 const fileType = document.getElementById('file-type');
 const logo = document.getElementById('logo');
+const deleteBtn = document.querySelector('.delete-button');
 
 document.addEventListener('DOMContentLoaded', () => {
     let currentFile = null;
@@ -132,6 +135,48 @@ document.addEventListener('DOMContentLoaded', () => {
         if (deltaX > 50) showPreviousFile();
     }
 
+    function deleteFile() {
+        if (currentFile) {
+            const confirmDelete = confirm(`Are you sure you want to delete "${currentFile.name}"?`);
+            if (confirmDelete) {
+                const encodedFileName = encodeURIComponent(currentFile.name);
+                const currentPath = window.location.pathname.replace(PREFIX_DRIVE, '');
+
+                console.log('Deleting file:', encodedFileName);
+                console.log('Current path:', currentPath);
+
+                fetch('/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `filename=${encodedFileName}&path=${encodeURIComponent(currentPath)}`
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text();
+                        } else {
+                            return response.text().then(text => {
+                                throw new Error(`Server responded with status: ${response.status}. Message: ${text}`);
+                            });
+                        }
+                    })
+                    .then(data => {
+                        console.log('Server response:', data);
+                        alert('File deleted successfully');
+                        closePreview();
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert(`An error occurred while deleting the file: ${error.message}`);
+                    });
+            }
+        } else {
+            console.error('No file selected for deletion');
+        }
+    }
+
     // Event Listeners
     viewerContent.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
@@ -185,8 +230,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // イベントリスナーの追加
+    deleteBtn.addEventListener('click', deleteFile);
     // Initialization
     const savedTheme = localStorage.getItem('darkMode');
     const isDarkMode = savedTheme === 'dark';
     if (isDarkMode) document.documentElement.classList.add('dark-mode');
+
+
 });
