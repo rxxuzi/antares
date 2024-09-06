@@ -95,6 +95,8 @@ func GetFileType(filename string, root string) string {
 		return "pdf"
 	case ".mp4", ".avi", ".mov", ".wmv", ".flv", ".webm":
 		return "video"
+	case ".txt", ".text":
+		return "text"
 	default:
 		fullPath := filepath.Join(root, filename)
 		if isTextFile(fullPath) {

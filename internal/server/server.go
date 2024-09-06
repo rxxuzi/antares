@@ -24,7 +24,7 @@ func CreateServer(config *Config) (*http.Server, error) {
 
 	mux.HandleFunc("/", rootHandler)
 
-	// 静的ファイルの提供
+	// 静的ファイル
 	fileServer := http.FileServer(http.FS(staticFS))
 	mux.Handle("/web/", http.StripPrefix("/web/", fileServer))
 
@@ -36,11 +36,11 @@ func CreateServer(config *Config) (*http.Server, error) {
 	antares := antaresServer(config.RootDir, staticFS)
 	mux.Handle(PREFIX_DRIVE, http.StripPrefix(PREFIX_DRIVE, antares))
 
-	mux.HandleFunc("/delete", func(w http.ResponseWriter, r *http.Request) {
-		deleteFileHandler(w, r, config.RootDir)
+	mux.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
+		handleAPI(w, r, config.RootDir)
 	})
 
-	// ログ記録用のミドルウェアを追加（LogFlagが真の場合のみ）
+	// ログ記録用のミドルウェア）
 	if config.LogFlag {
 		handler = logRequest(handler)
 	}

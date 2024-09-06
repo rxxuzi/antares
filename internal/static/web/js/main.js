@@ -139,33 +139,31 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentFile) {
             const confirmDelete = confirm(`Are you sure you want to delete "${currentFile.name}"?`);
             if (confirmDelete) {
-                const encodedFileName = encodeURIComponent(currentFile.name);
                 const currentPath = window.location.pathname.replace(PREFIX_DRIVE, '');
+                const filePath = currentPath + currentFile.name;
 
-                console.log('Deleting file:', encodedFileName);
-                console.log('Current path:', currentPath);
+                console.log('Deleting file:', filePath);
 
-                fetch('/delete', {
+                fetch('/api', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/json',
                     },
-                    body: `filename=${encodedFileName}&path=${encodeURIComponent(currentPath)}`
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            return response.text();
-                        } else {
-                            return response.text().then(text => {
-                                throw new Error(`Server responded with status: ${response.status}. Message: ${text}`);
-                            });
-                        }
+                    body: JSON.stringify({
+                        type: 'rm',
+                        path: filePath
                     })
+                })
+                    .then(response => response.json())
                     .then(data => {
                         console.log('Server response:', data);
-                        alert('File deleted successfully');
-                        closePreview();
-                        location.reload();
+                        if (data.success) {
+                            alert(data.message);
+                            closePreview();
+                            location.reload();
+                        } else {
+                            throw new Error(data.message);
+                        }
                     })
                     .catch(error => {
                         console.error('Error:', error);

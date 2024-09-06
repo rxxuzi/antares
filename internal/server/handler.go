@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"io"
 	"io/fs"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -169,49 +168,4 @@ func custom404Handler(w http.ResponseWriter) {
 		return
 	}
 	w.Write(custom404)
-}
-
-func deleteFileHandler(w http.ResponseWriter, r *http.Request, root string) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	filename := r.FormValue("filename")
-	path := r.FormValue("path")
-
-	log.Printf("Received delete request - Filename: %s, Path: %s", filename, path)
-
-	if filename == "" {
-		http.Error(w, "Filename is required", http.StatusBadRequest)
-		return
-	}
-
-	if path == "" {
-		path = "/"
-	}
-
-	fullPath := filepath.Join(root, filepath.FromSlash(path), filename)
-
-	log.Printf("Full path for deletion: %s", fullPath)
-
-	if !strings.HasPrefix(fullPath, root) {
-		http.Error(w, fmt.Sprintf("Invalid file path: %s", fullPath), http.StatusBadRequest)
-		return
-	}
-	_, err := os.Stat(fullPath)
-	if os.IsNotExist(err) {
-		http.Error(w, fmt.Sprintf("File not found: %s", fullPath), http.StatusNotFound)
-		return
-	}
-
-	err = os.Remove(fullPath)
-	if err != nil {
-		log.Printf("Failed to delete file: %v", err)
-		http.Error(w, fmt.Sprintf("Failed to delete file: %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf("File deleted successfully: %s", fullPath)))
 }
