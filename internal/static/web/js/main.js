@@ -150,7 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        type: 'rm',
+                        file: true,
+                        type: 'delete',
                         path: filePath
                     })
                 })

@@ -19,10 +19,6 @@
     display: none;
 }
 
-.modal-content {
-    padding: 10px 0;
-}
-
 #action-modal h3, #folder-action-modal h3 {
     font-size: 18px;
     margin: 0;
