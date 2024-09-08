@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -112,8 +113,70 @@ func handleMove(w http.ResponseWriter, req APIRequest, root string) {
 }
 
 func handleCopy(w http.ResponseWriter, req APIRequest, root string) {
-	// TODO: Implement
-	sendJSONResponse(w, false, "Copy operation not implemented yet", ErrOperationFailed, http.StatusNotImplemented)
+	if req.Path == "" {
+		sendJSONResponse(w, false, "Source path is required", ErrMissingPath, http.StatusBadRequest)
+		return
+	}
+
+	srcPath := filepath.Join(root, filepath.Clean(req.Path))
+	if !strings.HasPrefix(srcPath, root) {
+		sendJSONResponse(w, false, "Invalid source file path", ErrInvalidPath, http.StatusBadRequest)
+		return
+	}
+
+	srcInfo, err := os.Stat(srcPath)
+	if os.IsNotExist(err) {
+		sendJSONResponse(w, false, "Source file not found", ErrFileNotFound, http.StatusNotFound)
+		return
+	}
+
+	// Generate destination path
+	ext := filepath.Ext(srcPath)
+	baseName := strings.TrimSuffix(filepath.Base(srcPath), ext)
+	dstPath := filepath.Join(filepath.Dir(srcPath), baseName+"-copy"+ext)
+
+	counter := 1
+	for {
+		_, err := os.Stat(dstPath)
+		if os.IsNotExist(err) {
+			break
+		}
+		dstPath = filepath.Join(filepath.Dir(srcPath), fmt.Sprintf("%s-copy%d%s", baseName, counter, ext))
+		counter++
+	}
+
+	if !srcInfo.IsDir() {
+		err = copyFile(srcPath, dstPath)
+	}
+
+	if err != nil {
+		log.Printf("Failed to copy: %v", err)
+		sendJSONResponse(w, false, fmt.Sprintf("Failed to copy: %v", err), ErrOperationFailed, http.StatusInternalServerError)
+		return
+	}
+
+	sendJSONResponse(w, true, fmt.Sprintf("Successfully copied from %s to %s", req.Path, dstPath), "", http.StatusOK)
+}
+
+func copyFile(src, dst string) error {
+	sourceFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer sourceFile.Close()
+
+	destFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	_, err = io.Copy(destFile, sourceFile)
+	if err != nil {
+		return err
+	}
+
+	return destFile.Sync()
 }
 
 func handleRename(w http.ResponseWriter, req APIRequest, root string) {
@@ -124,9 +187,6 @@ func handleRename(w http.ResponseWriter, req APIRequest, root string) {
 
 	srcPath := filepath.Join(root, filepath.Clean(req.Path))
 	dstPath := filepath.Join(root, filepath.Clean(req.Dst))
-
-	log.Printf("src -> %s\n", srcPath)
-	log.Printf("dst -> %s\n", dstPath)
 
 	if !strings.HasPrefix(srcPath, root) || !strings.HasPrefix(dstPath, root) {
 		sendJSONResponse(w, false, "Invalid file path", ErrInvalidPath, http.StatusBadRequest)

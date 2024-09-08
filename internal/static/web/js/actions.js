@@ -170,7 +170,6 @@ async function renameFile(fileInfo, newName) {
         console.log('Server response:', data);
 
         if (data.success) {
-            alert(data.message);
             location.reload();
         } else {
             throw new Error(data.message);
@@ -181,9 +180,42 @@ async function renameFile(fileInfo, newName) {
     }
 }
 
+async function copyFile(fileInfo) {
+    const currentPath = window.location.pathname.replace(PREFIX_DRIVE, '');
+    const srcPath = currentPath + fileInfo.name;
+
+    console.log('Copying:', srcPath);
+
+    try {
+        const response = await fetch('/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                file: fileInfo.type !== 'folder',
+                type: 'copy',
+                path: srcPath
+            })
+        });
+
+        const data = await response.json();
+        console.log('Server response:', data);
+
+        if (data.success) {
+            location.reload();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(`An error occurred while copying: ${error.message}`);
+    }
+}
+
 function handleCopy() {
     console.log('Copying:', currentFileInfo.name);
-    // TODO: 実際のコピー処理を実装
+    copyFile(currentFileInfo);
     closeAllModals();
 }
 
