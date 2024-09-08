@@ -321,10 +321,43 @@ function handleInfo() {
 function handleDelete() {
     console.log('Deleting:', currentFileInfo.name);
     if (confirm(`Are you sure you want to delete "${currentFileInfo.name}"?`)) {
-        // TODO: 実際の削除処理を実装
-        console.log('File deleted:', currentFileInfo.name);
+        deleteFile(currentFileInfo);
     }
     closeAllModals();
+}
+
+async function deleteFile(fileInfo) {
+    const currentPath = window.location.pathname.replace(PREFIX_DRIVE, '');
+    const filePath = currentPath + fileInfo.name;
+
+    console.log('Deleting:', filePath);
+
+    try {
+        const response = await fetch('/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                file: fileInfo.type !== 'folder',
+                type: 'delete',
+                path: filePath
+            })
+        });
+
+        const data = await response.json();
+        console.log('Server response:', data);
+
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(`An error occurred while deleting: ${error.message}`);
+    }
 }
 
 // Folder Action Handlers
@@ -337,8 +370,7 @@ function handleMoveFolder() {
 function handleDeleteFolder() {
     console.log('Deleting folder:', currentFileInfo.name);
     if (confirm(`Are you sure you want to delete the folder "${currentFileInfo.name}" and all its contents?`)) {
-        // TODO: フォルダーの削除処理を実装
-        console.log('Folder deleted:', currentFileInfo.name);
+        deleteFile(currentFileInfo);
     }
     closeAllModals();
 }
