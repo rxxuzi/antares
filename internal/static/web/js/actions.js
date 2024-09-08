@@ -221,8 +221,87 @@ function handleCopy() {
 
 function handleMove() {
     console.log('Moving:', currentFileInfo.name);
-    // TODO: 実際の移動処理を実装
+    showMoveModal(currentFileInfo);
     closeAllModals();
+}
+
+function showMoveModal(fileInfo) {
+    const moveModal = document.createElement('div');
+    moveModal.className = 'action-modal';
+    moveModal.innerHTML = `
+        <div class="modal-content">
+            <h3>Move ${fileInfo.type === 'folder' ? 'Folder' : 'File'}</h3>
+            <p>Current location: ${fileInfo.path}</p>
+            <input type="text" id="move-destination" placeholder="Enter destination path" value="${fileInfo.path}"/>
+            <div class="button-group">
+                <button class="action-confirm">Move</button>
+                <button class="action-cancel">Cancel</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(moveModal);
+
+    const destinationInput = moveModal.querySelector('#move-destination');
+    const confirmButton = moveModal.querySelector('.action-confirm');
+    const cancelButton = moveModal.querySelector('.action-cancel');
+
+    destinationInput.focus();
+
+    function closeModal() {
+        document.body.removeChild(moveModal);
+    }
+
+    confirmButton.addEventListener('click', () => {
+        const newPath = destinationInput.value;
+        if (newPath && newPath !== fileInfo.path) {
+            moveFile(fileInfo, newPath);
+        }
+        closeModal();
+    });
+
+    cancelButton.addEventListener('click', closeModal);
+    moveModal.addEventListener('click', (event) => {
+        if (event.target === moveModal) {
+            closeModal();
+        }
+    });
+
+    moveModal.style.display = 'block';
+}
+
+async function moveFile(fileInfo, newPath) {
+    const currentPath = window.location.pathname.replace(PREFIX_DRIVE, '');
+    const oldPath = currentPath + fileInfo.name;
+
+    console.log('Moving:', oldPath, 'to', newPath);
+
+    try {
+        const response = await fetch('/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                file: fileInfo.type !== 'folder',
+                type: 'move',
+                path: oldPath,
+                dst: newPath
+            })
+        });
+
+        const data = await response.json();
+        console.log('Server response:', data);
+
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert(`An error occurred while moving: ${error.message}`);
+    }
 }
 
 function handleInfo() {

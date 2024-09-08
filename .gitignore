@@ -102,3 +102,8 @@ fabric.properties
 # Go workspace file
 go.work
 
+
+obj/
+bin/
+
+

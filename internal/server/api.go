@@ -108,8 +108,39 @@ func handleDelete(w http.ResponseWriter, req APIRequest, root string) {
 }
 
 func handleMove(w http.ResponseWriter, req APIRequest, root string) {
-	// TODO: Implement
-	sendJSONResponse(w, false, "Move operation not implemented yet", ErrOperationFailed, http.StatusNotImplemented)
+	if req.Path == "" || req.Dst == "" {
+		sendJSONResponse(w, false, "Both source and destination paths are required", ErrMissingPath, http.StatusBadRequest)
+		return
+	}
+
+	srcPath := filepath.Join(root, filepath.Clean(req.Path))
+	dstPath := filepath.Join(root, filepath.Clean(req.Dst))
+
+	if !strings.HasPrefix(srcPath, root) || !strings.HasPrefix(dstPath, root) {
+		sendJSONResponse(w, false, "Invalid file path", ErrInvalidPath, http.StatusBadRequest)
+		return
+	}
+
+	if _, err := os.Stat(srcPath); os.IsNotExist(err) {
+		sendJSONResponse(w, false, "Source file or folder not found", ErrFileNotFound, http.StatusNotFound)
+		return
+	}
+
+	// Ensure the destination directory exists
+	dstDir := filepath.Dir(dstPath)
+	if err := os.MkdirAll(dstDir, os.ModePerm); err != nil {
+		log.Printf("Failed to create destination directory: %v", err)
+		sendJSONResponse(w, false, fmt.Sprintf("Failed to create destination directory: %v", err), ErrOperationFailed, http.StatusInternalServerError)
+		return
+	}
+
+	if err := os.Rename(srcPath, dstPath); err != nil {
+		log.Printf("Failed to move: %v", err)
+		sendJSONResponse(w, false, fmt.Sprintf("Failed to move: %v", err), ErrOperationFailed, http.StatusInternalServerError)
+		return
+	}
+
+	sendJSONResponse(w, true, fmt.Sprintf("Successfully moved from %s to %s", req.Path, req.Dst), "", http.StatusOK)
 }
 
 func handleCopy(w http.ResponseWriter, req APIRequest, root string) {
