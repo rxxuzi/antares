@@ -59,6 +59,8 @@ func handleAPI(w http.ResponseWriter, r *http.Request, root string) {
 		handleCopy(w, req, root)
 	case "rename":
 		handleRename(w, req, root)
+	case "mkdir":
+		handleMkdir(w, req, root)
 	default:
 		sendJSONResponse(w, false, "Unknown operation type", ErrUnknownOperation, http.StatusBadRequest)
 	}
@@ -105,6 +107,34 @@ func handleDelete(w http.ResponseWriter, req APIRequest, root string) {
 		fileOrFolder = "Folder"
 	}
 	sendJSONResponse(w, true, fmt.Sprintf("%s deleted successfully: %s", fileOrFolder, req.Path), "", http.StatusOK)
+}
+
+func handleMkdir(w http.ResponseWriter, req APIRequest, root string) {
+	if req.Path == "" {
+		sendJSONResponse(w, false, "Path is required", ErrMissingPath, http.StatusBadRequest)
+		return
+	}
+
+	newDirPath := filepath.Join(root, filepath.Clean(req.Path))
+
+	if !strings.HasPrefix(newDirPath, root) {
+		sendJSONResponse(w, false, "Invalid directory path", ErrInvalidPath, http.StatusBadRequest)
+		return
+	}
+
+	if _, err := os.Stat(newDirPath); !os.IsNotExist(err) {
+		sendJSONResponse(w, false, "Directory already exists", ErrOperationFailed, http.StatusBadRequest)
+		return
+	}
+
+	err := os.MkdirAll(newDirPath, os.ModePerm)
+	if err != nil {
+		log.Printf("Failed to create directory: %v", err)
+		sendJSONResponse(w, false, fmt.Sprintf("Failed to create directory: %v", err), ErrOperationFailed, http.StatusInternalServerError)
+		return
+	}
+
+	sendJSONResponse(w, true, fmt.Sprintf("Directory created successfully: %s", req.Path), "", http.StatusOK)
 }
 
 func handleMove(w http.ResponseWriter, req APIRequest, root string) {
