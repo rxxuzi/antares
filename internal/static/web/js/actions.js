@@ -86,10 +86,18 @@ function closeAllModals() {
 // Action Handlers
 function handleDownload() {
     console.log('Downloading:', currentFileInfo.name);
-    // TODO: 実際のダウンロード処理を実装
+    downloadFile(currentFileInfo);
     closeAllModals();
 }
 
+function downloadFile(fileInfo) {
+    const link = document.createElement('a');
+    link.href = PREFIX_DRIVE + fileInfo.path;
+    link.download = fileInfo.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 
 function handleRename() {
     console.log('Renaming:', currentFileInfo.name);
