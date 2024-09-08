@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/rxxuzi/antares/internal/global"
 	"io"
 	"log"
 	"net/http"
@@ -38,6 +39,13 @@ const (
 )
 
 func handleAPI(w http.ResponseWriter, r *http.Request, root string) {
+	if r.Method == http.MethodGet {
+		// ブラウザでアクセスされた場合にHTMLページを返す
+		w.Header().Set("Content-Type", "text/html")
+		fmt.Fprintf(w, global.PageApi)
+		return
+	}
+
 	if r.Method != http.MethodPost {
 		sendJSONResponse(w, false, "Method not allowed", ErrInvalidMethod, http.StatusMethodNotAllowed)
 		return

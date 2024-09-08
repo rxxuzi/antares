@@ -80,7 +80,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to generate default configuration: %v", err)
 		}
-		fmt.Println("Default configuration file (future.json) has been generated.")
+		fmt.Println("Default configuration file (antares.json) has been generated.")
 		return
 	}
 

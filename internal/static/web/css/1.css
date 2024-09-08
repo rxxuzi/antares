@@ -1,0 +1,74 @@
+/* 1.css */
+:root {
+    --ac: #ff1a3f;
+}
+
+main {
+    width: 600px;
+    padding: 2em;
+    background-color: #fdfdfd;
+}
+
+a:link, a:visited {
+    color: deepskyblue;
+    text-decoration: var(--ac);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--ac);
+    margin-bottom: 15px;
+}
+
+p {
+    margin-bottom: 15px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+ul, ol {
+    margin-bottom: 15px;
+    padding-left: 30px;
+}
+
+li {
+    margin-bottom: 5px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+code {
+    font-family: 'Courier New', Courier, monospace;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+button {
+    background-color: var(--ac);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}

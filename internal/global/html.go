@@ -1,3 +1,6 @@
+package global
+
+const Page404 = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,3 +28,20 @@
 </div>
 </body>
 </html>
+`
+
+const PageApi = `
+<html>
+<head>
+	<title>Antares - API</title>
+	<link rel="stylesheet" href="/web/css/1.css">
+</head>
+<body>
+	<main>
+		<h1>API Endpoint</h1>
+		<p>This page is displayed when accessed from a browser.</p>
+		<p>For detailed usage of this API, please refer to the <a href="https://github.com/rxxuzi/antares/blob/main/doc/api.md">api.md</a>.</p>
+	</main>
+</body>
+</html>
+`

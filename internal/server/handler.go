@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"github.com/rxxuzi/antares/internal/static"
+	"github.com/rxxuzi/antares/internal/global"
 	"html/template"
 	"io"
 	"io/fs"
@@ -161,11 +161,5 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 func custom404Handler(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusNotFound)
-	staticFS := static.GetFS()
-	custom404, err := fs.ReadFile(staticFS, "404.html")
-	if err != nil {
-		http.Error(w, "<html><head><title>404 Not Found</title></head><body><h1 style=\"text-align: center\">404 Not Found</h1></body></html>", http.StatusNotFound)
-		return
-	}
-	w.Write(custom404)
+	w.Write([]byte(global.Page404))
 }
