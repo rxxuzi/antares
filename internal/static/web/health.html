@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antares - Health Status</title>
+    <script>
+        (function() {
+            const darkMode = localStorage.getItem('darkMode');
+            if (darkMode === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="/web/css/colors.css">
+    <link rel="stylesheet" href="/web/css/health.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image" href="/web/favicon.ico">
+</head>
+<body>
+<main>
+    <h1>Server Health Status</h1>
+    <div class="health-content">
+        <div class="status-group">
+            <h2>Status</h2>
+            <p class="status-value">
+                <span class="status-indicator status-{{.Status | toLower}}"></span>
+                {{.Status}}
+            </p>
+            <h2>Uptime</h2>
+            <p class="status-value">{{.Uptime}}</p>
+            <h2>Disk Status</h2>
+            <p class="status-value">
+                <span class="status-indicator status-{{.DiskStatus | toLower}}"></span>
+                {{.DiskStatus}}
+            </p>
+            <h2>Network Status</h2>
+            <p class="status-value">
+                <span class="status-indicator status-{{.NetworkStatus | toLower}}"></span>
+                {{.NetworkStatus}}
+            </p>
+            <h2>Network Usage</h2>
+            <div class="network-usage">
+                <div class="network-stat">
+                    <p>Network In</p>
+                    <p class="network-value">{{.NetworkIn | formatBytes}}</p>
+                </div>
+                <div class="network-stat">
+                    <p>Network Out</p>
+                    <p class="network-value">{{.NetworkOut | formatBytes}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="usage">
+            <div class="usage-group">
+                <div class="chart-card">
+                    <h2>Disk Usage</h2>
+                    <div class="chart-container">
+                        <canvas id="diskChart"></canvas>
+                    </div>
+                    <p class="usage-value">{{.DiskUse | printf "%.1f"}}% Used</p>
+                </div>
+            </div>
+            <div class="chart-card realtime-card">
+                <h2>Real-time Usage</h2>
+                <div class="chart-container">
+                    <canvas id="realtimeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    // カラー設定
+    const colors = {
+        light: {
+            lv4: '#ff00a0',
+            lv3: '#ffff2f',
+            lv2: '#2fff2f',
+            lv1: '#20f0ff',
+            background: 'rgba(255, 255, 255, 0.1)',
+            text: 'rgba(0, 0, 0, 0.7)',
+            grid: 'rgba(0, 0, 0, 0.1)'
+        },
+        dark: {
+            lv4: '#eda3f2',
+            lv3: '#ffffb0',
+            lv2: '#bfffbf',
+            lv1: '#9dd5ff',
+            background: 'rgba(255, 255, 255, 0.1)',
+            text: 'rgba(255, 255, 255, 0.7)',
+            grid: 'rgba(255, 255, 255, 0.1)'
+        }
+    };
+
+    let diskChart;
+    let realtimeChart;
+
+    // ページ読み込み時の処理
+    document.addEventListener('DOMContentLoaded', () => {
+        createDiskChart();
+        createRealtimeChart();
+    });
+
+    function isDarkMode() {
+        return document.documentElement.classList.contains('dark-mode');
+    }
+
+    function getColorScheme() {
+        return isDarkMode() ? colors.dark : colors.light;
+    }
+
+    function createDiskChart() {
+        const ctx = document.getElementById('diskChart').getContext('2d');
+        const value = {{.DiskUse}};
+        const colorScheme = getColorScheme();
+        const color = value > 90 ? colorScheme.lv4 : value > 70 ? colorScheme.lv3 : value > 50 ? colorScheme.lv2 : colorScheme.lv1;
+
+        diskChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [value, 100 - value],
+                    backgroundColor: [color, colorScheme.background]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            }
+        });
+    }
+
+    function createRealtimeChart() {
+        const ctx = document.getElementById('realtimeChart').getContext('2d');
+        const colorScheme = getColorScheme();
+
+        realtimeChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'CPU Usage',
+                        data: [],
+                        borderColor: colorScheme.lv4,
+                        backgroundColor: `${colorScheme.lv4}33`,
+                        tension: 0.1,
+                        fill: true
+                    },
+                    {
+                        label: 'Memory Usage',
+                        data: [],
+                        borderColor: colorScheme.lv1,
+                        backgroundColor: `${colorScheme.lv1}33`,
+                        tension: 0.1,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { color: colorScheme.text },
+                        grid: { color: colorScheme.grid }
+                    },
+                    x: {
+                        ticks: { color: colorScheme.text },
+                        grid: { color: colorScheme.grid }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: colorScheme.text }
+                    }
+                }
+            }
+        });
+    }
+
+    // ダークモードの変更を監視し、チャートを更新する
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                updateCharts();
+            }
+        });
+    });
+
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+
+    function updateCharts() {
+        const colorScheme = getColorScheme();
+
+        // ディスクチャートの更新
+        const value = {{.DiskUse}};
+        const color = value > 90 ? colorScheme.lv4 : value > 70 ? colorScheme.lv3 : value > 50 ? colorScheme.lv2 : colorScheme.lv1;
+        diskChart.data.datasets[0].backgroundColor = [color, colorScheme.background];
+        diskChart.update();
+
+        // リアルタイムチャートの更新
+        realtimeChart.data.datasets[0].borderColor = colorScheme.lv4;
+        realtimeChart.data.datasets[0].backgroundColor = `${colorScheme.lv4}33`;
+        realtimeChart.data.datasets[1].borderColor = colorScheme.lv1;
+        realtimeChart.data.datasets[1].backgroundColor = `${colorScheme.lv1}33`;
+
+        realtimeChart.options.scales.y.ticks.color = colorScheme.text;
+        realtimeChart.options.scales.y.grid.color = colorScheme.grid;
+        realtimeChart.options.scales.x.ticks.color = colorScheme.text;
+        realtimeChart.options.scales.x.grid.color = colorScheme.grid;
+        realtimeChart.options.plugins.legend.labels.color = colorScheme.text;
+
+        realtimeChart.update();
+    }
+
+    // WebSocketを使用してリアルタイムデータを取得
+    const socket = new WebSocket('ws://' + window.location.host + '/ws');
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        const chart = realtimeChart;
+
+        chart.data.labels.push(new Date().toLocaleTimeString());
+        chart.data.datasets[0].data.push(data.CPUUse);
+        chart.data.datasets[1].data.push(data.MemoryUse);
+
+        if (chart.data.labels.length > 20) {
+            chart.data.labels.shift();
+            chart.data.datasets[0].data.shift();
+            chart.data.datasets[1].data.shift();
+        }
+
+        chart.update();
+    };
+</script>
+</body>
+</html>

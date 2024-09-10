@@ -1,0 +1,102 @@
+/* health.css */
+body {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    font-family: Arial, sans-serif;
+}
+
+.health-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.status-group, .usage {
+    background-color: var(--secondary-color);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1, h2 {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 30px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+.status-value, .usage-value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.usage-value {
+    text-align: center;
+    margin-top: 10px;
+    color: var(--accent-color);
+}
+
+.chart-container {
+    height: 300px;
+    margin-bottom: 20px;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-healthy { background-color: var(--lv2); }
+.status-warning { background-color: var(--lv3); }
+.status-critical { background-color: var(--lv4); }
+
+.network-usage {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.network-stat {
+    text-align: center;
+}
+
+.network-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.usage-group {
+    margin-bottom: 20px;
+}
+
+.realtime-card {
+    margin-top: 20px;
+}
+
+@media (max-width: 1200px) {
+    .health-content {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 200px;
+    }
+}

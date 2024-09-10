@@ -40,6 +40,12 @@ func CreateServer(config *Config) (*http.Server, error) {
 		handleAPI(w, r, config.RootDir)
 	})
 
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		healthHandler(w, r, staticFS)
+	})
+
+	mux.HandleFunc("/ws", wsHandler)
+
 	// ログ記録用のミドルウェア）
 	if config.LogFlag {
 		handler = logRequest(handler)
