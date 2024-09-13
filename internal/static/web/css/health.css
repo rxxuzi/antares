@@ -3,6 +3,7 @@ body {
     background-color: var(--primary-color);
     color: var(--text-color);
     font-family: Arial, sans-serif;
+    height: 100%;
 }
 
 .health-content {
@@ -33,20 +34,15 @@ h2 {
     font-size: 20px;
 }
 
-.status-value, .usage-value {
+.value{
     font-size: 24px;
     font-weight: bold;
-}
-
-.usage-value {
-    text-align: center;
     margin-top: 10px;
-    color: var(--accent-color);
 }
 
 .chart-container {
-    height: 300px;
-    margin-bottom: 20px;
+    border-radius: 8px;
+    padding: 10px;
 }
 
 .status-indicator {
@@ -62,19 +58,11 @@ h2 {
 .status-critical { background-color: var(--lv4); }
 
 .network-usage {
-    display: flex;
-    justify-content: space-between;
     margin-top: 20px;
 }
 
 .network-stat {
     text-align: center;
-}
-
-.network-value {
-    font-size: 18px;
-    font-weight: bold;
-    color: var(--accent-color);
 }
 
 .usage-group {
@@ -83,20 +71,4 @@ h2 {
 
 .realtime-card {
     margin-top: 20px;
-}
-
-@media (max-width: 1200px) {
-    .health-content {
-        grid-template-columns: 1fr;
-    }
-
-    .chart-container {
-        height: 250px;
-    }
-}
-
-@media (max-width: 768px) {
-    .chart-container {
-        height: 200px;
-    }
 }

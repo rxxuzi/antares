@@ -14,13 +14,16 @@
     --hover-color: #e8f0fe;
     --item-color: #5f6368;
     --folder-bg: #e8f0fe;
+
+    --lv4-a: rgba(255, 0, 160, 0.7);
+    --lv1-a: rgba(32, 240, 255, 0.7);
 }
 
 .dark-mode {
-    --lv4: #eda3f2;
-    --lv3: #ffffb0;
-    --lv2: #bfffbf;
-    --lv1: #9dd5ff;
+    --lv4: #ff50c8;
+    --lv3: #ffff50;
+    --lv2: #50ff50;
+    --lv1: #50f0ff;
 
     --primary-color: #121212;
     --secondary-color: #1e1e1e;
@@ -30,4 +33,7 @@
     --hover-color: #2c2c2c;
     --item-color: #b0b0b0;
     --folder-bg: #2a2a2a;
+
+    --lv4-a: rgba(255, 80, 200, 0.7);
+    --lv1-a: rgba(80, 240, 255, 0.7);
 }

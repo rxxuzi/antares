@@ -63,18 +63,17 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	defer conn.Close()
 
 	for {
-		cpuUsage, _ := cpu.Percent(time.Second, false)
-		memUsage, _ := mem.VirtualMemory()
-		data := map[string]float64{
-			"CPUUse":    cpuUsage[0],
-			"MemoryUse": memUsage.UsedPercent,
+		status := getHealthStatus()
+		data := map[string]interface{}{
+			"CPUUse":    status.CPUUse,
+			"MemoryUse": status.MemoryUse,
+			"Uptime":    status.Uptime,
 		}
 		conn.WriteJSON(data)
 		time.Sleep(time.Second)
 	}
 }
 
-// バイト数を適切な単位に変換する関数
 func formatBytes(bytes uint64) string {
 	const unit = 1024
 	if bytes < unit {
@@ -89,15 +88,16 @@ func formatBytes(bytes uint64) string {
 }
 
 type HealthStatus struct {
-	Status        string  `json:"status"`
-	Uptime        string  `json:"uptime"`
-	MemoryUse     float64 `json:"memory_use"`
-	CPUUse        float64 `json:"cpu_use"`
-	DiskUse       float64 `json:"disk_use"`
-	NetworkIn     uint64  `json:"network_in"`
-	NetworkOut    uint64  `json:"network_out"`
-	DiskStatus    string  `json:"disk_status"`
-	NetworkStatus string  `json:"network_status"`
+	Status        string    `json:"status"`
+	Uptime        string    `json:"uptime"`
+	MemoryUse     float64   `json:"memory_use"`
+	CPUUse        float64   `json:"cpu_use"`
+	DiskUse       float64   `json:"disk_use"`
+	NetworkIn     uint64    `json:"network_in"`
+	NetworkOut    uint64    `json:"network_out"`
+	DiskStatus    string    `json:"disk_status"`
+	NetworkStatus string    `json:"network_status"`
+	StartTime     time.Time `json:"start_time"`
 }
 
 func getHealthStatus() HealthStatus {
@@ -133,5 +133,6 @@ func getHealthStatus() HealthStatus {
 		NetworkOut:    netOut,
 		DiskStatus:    diskStatus,
 		NetworkStatus: networkStatus,
+		StartTime:     startTime,
 	}
 }
