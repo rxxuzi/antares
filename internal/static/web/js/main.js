@@ -235,6 +235,4 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('darkMode');
     const isDarkMode = savedTheme === 'dark';
     if (isDarkMode) document.documentElement.classList.add('dark-mode');
-
-
 });

@@ -22,6 +22,9 @@ const Page404 = `
 </head>
 <body>
 <div class="error-container">
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 130">
+		<path d="M15 120 L95 40 L35 80 L55 40 L95 120 L115 120 L55 00 L05 100 Z" fill="#ff1a3f"/>
+	</svg>
     <h2 class="error-code">404</h2>
     <p class="error-message">Oops! Page Not Found</p>
     <a href="/" class="home-button">Return to Home</a>

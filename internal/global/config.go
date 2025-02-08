@@ -78,7 +78,3 @@ func SaveConfig(config *Conf) error {
 	encoder.SetIndent("", "  ")
 	return encoder.Encode(config)
 }
-
-func GenerateDefaultConfig() error {
-	return SaveConfig(DefaultConfig())
-}

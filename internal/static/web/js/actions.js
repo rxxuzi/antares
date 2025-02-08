@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupGlobalListeners();
 });
 
-
 // Functions
 function setupItemListeners() {
     document.querySelectorAll('.item').forEach(item => {
@@ -30,12 +29,12 @@ function setupActionListeners() {
 
     // -> folder
     document.getElementById('folder-action-rename').addEventListener('click', handleRenameFolder);
-    document.getElementById('folder-action-move').addEventListener('click', handleMoveFolder);
     document.getElementById('folder-action-delete').addEventListener('click', handleDeleteFolder);
 }
 
 function setupGlobalListeners() {
     document.addEventListener('click', (e) => {
+        // モーダル本体以外をクリックしたら閉じる
         if (!e.target.closest('#action-modal') && !e.target.closest('#folder-action-modal')) {
             closeAllModals();
         }
@@ -53,6 +52,7 @@ function handleRightClick(e) {
     const item = e.currentTarget;
     const link = item.querySelector('a');
 
+    // ファイル/フォルダ情報を格納
     currentFileInfo = {
         name: link.getAttribute('filename') || link.textContent.trim(),
         path: link.getAttribute('href'),
@@ -63,6 +63,7 @@ function handleRightClick(e) {
 
     closeAllModals();
 
+    // 右クリックした位置 (clientX, clientY) を元にモーダルを表示
     if (currentFileInfo.type === 'folder') {
         showModal(folderActionModal, e.clientX, e.clientY);
     } else {
@@ -70,10 +71,40 @@ function handleRightClick(e) {
     }
 }
 
+/**
+ * モーダルを画面外にはみ出さないように表示する関数
+ * @param {HTMLElement} modal - 表示対象のモーダル要素
+ * @param {number} x - 表示したいX座標 (マウスクリック位置)
+ * @param {number} y - 表示したいY座標 (マウスクリック位置)
+ */
 function showModal(modal, x, y) {
+    // モーダルをいったん表示してサイズを取得できる状態にする
     modal.style.display = 'block';
+
+    // position を fixed にする（CSS 側でも指定しておくとなお良い）
+    modal.style.position = 'fixed';
+
+    // モーダルの幅・高さ
+    const modalWidth = modal.offsetWidth;
+    const modalHeight = modal.offsetHeight;
+
+    // 画面（ウィンドウ）の幅・高さ
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    // 右にはみ出す場合
+    if (x + modalWidth > windowWidth) {
+        x = windowWidth - modalWidth - 10; // 10pxほどマージン
+    }
+    // 下にはみ出す場合
+    if (y + modalHeight > windowHeight) {
+        y = windowHeight - modalHeight - 10; // 10pxほどマージン
+    }
+
+    // 実際の位置を設定
     modal.style.left = `${x}px`;
     modal.style.top = `${y}px`;
+
     currentOpenModal = modal;
 }
 
@@ -358,13 +389,6 @@ async function deleteFile(fileInfo) {
         console.error('Error:', error);
         alert(`An error occurred while deleting: ${error.message}`);
     }
-}
-
-// Folder Action Handlers
-function handleMoveFolder() {
-    console.log('Moving folder:', currentFileInfo.name);
-    // TODO: フォルダーの移動処理を実装
-    closeAllModals();
 }
 
 function handleDeleteFolder() {

@@ -46,24 +46,38 @@ func parseQuery(query string, useRegex bool) SearchQuery {
 	for i := 0; i < len(terms); i++ {
 		term := terms[i]
 
+		// OR演算子の場合
 		if strings.EqualFold(term, "OR") || term == "||" {
 			sq.IsOr = true
 			continue
 		}
 
+		// AND演算子は無視
 		if strings.EqualFold(term, "AND") || term == "&&" {
 			continue
 		}
 
-		condition := SearchCondition{
-			Term:    term,
-			IsRegex: useRegex,
-			IsNot:   false,
-		}
+		var condition SearchCondition
+		condition.IsRegex = useRegex
+		condition.IsNot = false
 
-		if strings.HasPrefix(term, "NOT") || strings.HasPrefix(term, "!!") {
+		// NOT演算子が単独のトークンの場合、次のトークンを対象語とする
+		if term == "NOT" || term == "!!" {
 			condition.IsNot = true
-			condition.Term = strings.TrimPrefix(strings.TrimPrefix(term, "NOT"), "!!")
+			if i+1 < len(terms) {
+				i++
+				condition.Term = terms[i]
+			} else {
+				condition.Term = ""
+			}
+		} else if strings.HasPrefix(term, "NOT") {
+			condition.IsNot = true
+			condition.Term = strings.TrimPrefix(term, "NOT")
+		} else if strings.HasPrefix(term, "!!") {
+			condition.IsNot = true
+			condition.Term = strings.TrimPrefix(term, "!!")
+		} else {
+			condition.Term = term
 		}
 
 		sq.Conditions = append(sq.Conditions, condition)

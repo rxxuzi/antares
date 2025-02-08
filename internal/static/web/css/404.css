@@ -62,3 +62,9 @@
     background-color: var(--accent-color);
     filter: brightness(110%);
 }
+
+svg {
+    width: 20%;
+    height: 20%;
+    margin-bottom: 1rem;
+}
