@@ -95,6 +95,10 @@
     height: 25%;
 }
 
+#folder-action-modal {
+    height: 15%;
+}
+
 .action-modal .modal-content h3 {
     margin-top: 0;
     color: var(--text-color);
@@ -103,7 +107,7 @@
 }
 
 .action-modal .modal-content input[type="text"] {
-    width: 100%;
+    width: 90%;
     padding: 10px;
     border: 1px solid var(--border-color);
     border-radius: 4px;
