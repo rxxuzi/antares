@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"github.com/rxxuzi/antares/internal/global"
+	"github.com/rxxuzi/antares/internal/static"
 	"html/template"
 	"io"
 	"io/fs"
@@ -162,4 +163,35 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 func custom404Handler(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusNotFound)
 	w.Write([]byte(global.Page404))
+}
+
+func DocHandler(w http.ResponseWriter, r *http.Request) {
+	docFS := static.GetDoc()
+	relPath := r.URL.Path[len("/doc/"):]
+	switch relPath {
+	case "":
+		relPath = "home.html"
+	case "search":
+		relPath = "search.html"
+	case "api":
+		relPath = "api.html"
+	case "user-guide":
+		relPath = "user.html"
+	default:
+		relPath = "home.html"
+	}
+
+	relPath = filepath.Clean(relPath)
+
+	content, err := fs.ReadFile(docFS, relPath)
+	if err != nil {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+
+	if filepath.Ext(relPath) == ".html" {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	}
+
+	w.Write(content)
 }

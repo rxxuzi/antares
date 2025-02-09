@@ -27,7 +27,7 @@ func CreateServer(config *Config) (*http.Server, error) {
 	// 静的ファイル
 	fileServer := http.FileServer(http.FS(staticFS))
 	mux.Handle("/web/", http.StripPrefix("/web/", fileServer))
-
+	mux.HandleFunc("/doc/", DocHandler)
 	// 検索ハンドラー
 	mux.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
 		searchHandler(w, r, config.RootDir, staticFS)

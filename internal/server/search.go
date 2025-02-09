@@ -126,13 +126,19 @@ func searchHandler(w http.ResponseWriter, r *http.Request, root string, staticFS
 		return
 	}
 
-	useRegex := r.URL.Query().Get("r") == "true" || r.URL.Query().Has("r")
-	caseSensitive := r.URL.Query().Get("c") == "true" || r.URL.Query().Has("c")
-
 	if query == "" {
-		http.Error(w, "Query parameter 'q' is required", http.StatusBadRequest)
+		tmplContent, err := fs.ReadFile(staticFS, "search-home.html")
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Failed to read search homepage: %v", err), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.Write(tmplContent)
 		return
 	}
+
+	useRegex := r.URL.Query().Get("r") == "true" || r.URL.Query().Has("r")
+	caseSensitive := r.URL.Query().Get("c") == "true" || r.URL.Query().Has("c")
 
 	searchQuery := parseQuery(query, useRegex)
 	results, err := searchFiles(root, searchQuery, caseSensitive)
@@ -143,14 +149,14 @@ func searchHandler(w http.ResponseWriter, r *http.Request, root string, staticFS
 
 	fmt.Printf("Received query: %s, Regex: %v, Case Sensitive: %v\n", query, useRegex, caseSensitive)
 
-	// Check if the client wants JSON (e.g., for AJAX requests)
+	// クライアントが JSON を要求している場合
 	if r.Header.Get("Accept") == "application/json" {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(results)
 		return
 	}
 
-	// Render HTML page
+	// HTML ページとして結果をレンダリング
 	tmplContent, err := fs.ReadFile(staticFS, "search-result.html")
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to read template: %v", err), http.StatusInternalServerError)
@@ -165,7 +171,6 @@ func searchHandler(w http.ResponseWriter, r *http.Request, root string, staticFS
 		"formatSize":  formatSize,
 		"formatTime":  formatTime,
 	}).Parse(string(tmplContent))
-
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to parse template: %v", err), http.StatusInternalServerError)
 		return

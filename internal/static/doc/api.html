@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntaresDoc - API</title>
+    <link rel="stylesheet" href="/web/css/doc.css">
+    <link rel="icon" type="image" href="/web/favicon.ico">
+</head>
+<body>
+<header>
+    <h1>Antares API Documentation</h1>
+</header>
+<nav>
+    <ul>
+        <li><a href="#base-url">Base URL</a></li>
+        <li><a href="#request-format">Request Format</a></li>
+        <li><a href="#response-format">Response Format</a></li>
+        <li><a href="#available-operations">Available Operations</a></li>
+        <li><a href="#error-codes">Error Codes</a></li>
+    </ul>
+</nav>
+<main>
+    <section id="base-url">
+        <h2>Base URL</h2>
+        <p>
+            All API requests should be sent to: <code>/api</code>.
+        </p>
+    </section>
+    <section id="request-format">
+        <h2>Request Format</h2>
+        <p>
+            All requests must be <strong>POST</strong> requests with a JSON payload.
+            The general structure of a request is as follows:
+        </p>
+        <ul>
+            <li><code>file</code>: Boolean indicating whether the operation is on a file (<code>true</code>) or a folder (<code>false</code>)</li>
+            <li><code>type</code>: String indicating the type of operation</li>
+            <li><code>path</code>: String representing the path of the file or folder</li>
+            <li><code>src</code>: String representing the source path (for move and copy operations)</li>
+            <li><code>dst</code>: String representing the destination path (for move, copy, and rename operations)</li>
+            <li><code>option</code>: Object containing any additional options (if any)</li>
+        </ul>
+        <p>
+            Example request body:
+        </p>
+        <pre>
+{
+  "file": true,
+  "type": "move",
+  "path": "/path/to/source/file.txt",
+  "dst": "/path/to/destination/file.txt"
+}
+        </pre>
+    </section>
+
+    <!-- Response Format -->
+    <section id="response-format">
+        <h2>Response Format</h2>
+        <p>
+            All responses are returned in JSON format with the following structure:
+        </p>
+        <ul>
+            <li><code>success</code>: Boolean indicating whether the operation was successful</li>
+            <li><code>message</code>: String providing additional information about the result</li>
+            <li><code>error_code</code>: String indicating the type of error (if any)</li>
+            <li><code>data</code>: Object containing any additional data (if applicable)</li>
+        </ul>
+        <p>
+            Example success response:
+        </p>
+        <pre>
+{
+  "success": true,
+  "message": "File deleted successfully: /path/to/file.txt"
+}
+        </pre>
+    </section>
+
+    <!-- Available Operations -->
+    <section id="available-operations">
+        <h2>Available Operations</h2>
+
+        <h3>1. Delete</h3>
+        <p>Deletes a file or folder.</p>
+        <pre>
+Request:
+{
+  "file": true,
+  "type": "delete",
+  "path": "/path/to/file.txt"
+}
+
+Response:
+{
+  "success": true,
+  "message": "File deleted successfully: /path/to/file.txt"
+}
+        </pre>
+
+        <h3>2. Move</h3>
+        <p>Moves a file or folder to a new location.</p>
+        <pre>
+Request:
+{
+  "file": true,
+  "type": "move",
+  "path": "/path/to/source/file.txt",
+  "dst": "/path/to/destination/file.txt"
+}
+
+Response:
+{
+  "success": true,
+  "message": "Successfully moved from /path/to/source/file.txt to /path/to/destination/file.txt"
+}
+        </pre>
+
+        <h3>3. Copy</h3>
+        <p>Creates a copy of a file.</p>
+        <pre>
+Request:
+{
+  "file": true,
+  "type": "copy",
+  "path": "/path/to/source/file.txt"
+}
+
+Response:
+{
+  "success": true,
+  "message": "Successfully copied from /path/to/source/file.txt to /path/to/source/file-copy.txt"
+}
+        </pre>
+
+        <h3>4. Rename</h3>
+        <p>Renames a file or folder.</p>
+        <pre>
+Request:
+{
+  "file": true,
+  "type": "rename",
+  "path": "/path/to/oldname.txt",
+  "dst": "/path/to/newname.txt"
+}
+
+Response:
+{
+  "success": true,
+  "message": "Successfully renamed from /path/to/oldname.txt to /path/to/newname.txt"
+}
+        </pre>
+
+        <h3>5. Create Directory (mkdir)</h3>
+        <p>Creates a new directory.</p>
+        <pre>
+Request:
+{
+  "file": false,
+  "type": "mkdir",
+  "path": "/path/to/new/directory"
+}
+
+Response:
+{
+  "success": true,
+  "message": "Directory created successfully: /path/to/new/directory"
+}
+        </pre>
+    </section>
+
+    <!-- Error Codes -->
+    <section id="error-codes">
+        <h2>Error Codes</h2>
+        <p>If an error occurs on the server side, one of the following error codes may be returned:</p>
+        <ul>
+            <li><code>INVALID_METHOD</code>: The HTTP method used is not allowed</li>
+            <li><code>INVALID_JSON</code>: The request body is not valid JSON</li>
+            <li><code>UNKNOWN_OPERATION</code>: The requested operation type is not recognized</li>
+            <li><code>MISSING_PATH</code>: The required path parameter is missing in the request JSON</li>
+            <li><code>INVALID_PATH</code>: The specified path is invalid or outside the allowed directories</li>
+            <li><code>FILE_NOT_FOUND</code>: The specified file or folder does not exist</li>
+            <li><code>OPERATION_FAILED</code>: The requested operation failed</li>
+        </ul>
+    </section>
+</main>
+<footer>
+    <p>
+        Antares API Documentation &mdash; Use these endpoints to manage your files and directories.
+    </p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AntaresDoc - Search</title>
+    <link rel="stylesheet" href="/web/css/doc.css">
+    <link rel="icon" type="image" href="/web/favicon.ico">
+</head>
+<body>
+<header>
+    <h1>Antares Search Documentation</h1>
+</header>
+<nav>
+    <ul>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#basics">Basic Search</a></li>
+        <li><a href="#operators">Search Operators</a></li>
+        <li><a href="#regex">Regular Expressions</a></li>
+        <li><a href="#advanced">Advanced Examples</a></li>
+        <li><a href="#faq">FAQ</a></li>
+    </ul>
+</nav>
+<main>
+    <section id="introduction" class="section">
+        <h2>Introduction</h2>
+        <p>
+            Antares provides powerful search functionality for navigating through your files and directories.
+            This guide will help you understand and make the most of the search features, from basic keyword searches to complex queries using Boolean logic and regular expressions.
+        </p>
+    </section>
+
+    <section id="basics" class="section">
+        <h2>Basic Search</h2>
+        <p>
+            To perform a basic search, simply type the keyword(s) into the search box. For example, typing
+            <code>document</code> will return all files and folders containing the word "document".
+        </p>
+    </section>
+
+    <section id="operators" class="section">
+        <h2>Search Operators</h2>
+        <p>Refine your search results using these operators:</p>
+        <ul>
+            <li>
+                <strong>OR Search:</strong> Use <code>||</code> or <code>OR</code> between terms.<br>
+                <em>Example:</em> <code>jpg || png</code> returns files containing either "jpg" or "png".
+            </li>
+            <li>
+                <strong>AND Search:</strong> Use <code>&amp;&amp;</code> or <code>AND</code> between terms.<br>
+                <em>Example:</em> <code>document && pdf</code> returns files including both "document" and "pdf".
+            </li>
+            <li>
+                <strong>NOT Search:</strong> Use <code>NOT</code> or <code>!!</code> before a term to exclude it.<br>
+                <em>Example:</em> <code>image NOT png</code> excludes files containing "png".
+            </li>
+        </ul>
+    </section>
+
+    <section id="regex" class="section">
+        <h2>Regular Expression Quick Guide</h2>
+        <p>
+            When you enable regular expression search, you can use special symbols for flexible queries:
+        </p>
+        <ul>
+            <li><code>.</code> - Matches any single character</li>
+            <li><code>*</code> - Matches zero or more of the preceding character</li>
+            <li><code>+</code> - Matches one or more of the preceding character</li>
+            <li><code>?</code> - Matches zero or one of the preceding character</li>
+            <li><code>^</code> - Matches the start of the string</li>
+            <li><code>$</code> - Matches the end of the string</li>
+            <li><code>[abc]</code> - Matches any one character in the brackets</li>
+            <li><code>[^abc]</code> - Matches any character not in the brackets</li>
+        </ul>
+        <h3>Examples:</h3>
+        <div class="tips">
+            <p><code>\.pdf$</code> - Matches filenames ending with ".pdf"</p>
+        </div>
+        <div class=" tips">
+            <p><code>^img_\d+\.jpg$</code> - Matches filenames like "img_123.jpg"</p>
+        </div>
+    </section>
+
+    <section id="advanced" class="section">
+        <h2>Advanced Search Examples</h2>
+        <p>
+            Combine multiple operators and regex patterns for sophisticated searches:
+        </p>
+        <ul>
+            <li>
+                <strong>Combination Search:</strong> <code>report && (2021 || 2022)</code><br>
+                Returns reports from either 2021 or 2022.
+            </li>
+            <li>
+                <strong>Exclusion Search:</strong> <code>invoice NOT (draft || sample)</code><br>
+                Returns invoices while excluding those labeled as "draft" or "sample".
+            </li>
+            <li>
+                <strong>Regex for Date Formats:</strong> <code>^\d{4}-\d{2}-\d{2}$</code><br>
+                Matches filenames that exactly match a date format like "2023-07-25".
+            </li>
+        </ul>
+    </section>
+
+    <section id="faq" class="section">
+        <h2>Frequently Asked Questions</h2>
+        <h3>Q: What if my search returns too many results?</h3>
+        <p>
+            A: Try refining your query by combining multiple operators or using more specific regex patterns.
+        </p>
+        <h3>Q: How do I search for filenames with special characters?</h3>
+        <p>
+            A: If your filename contains regex metacharacters (e.g. <code>.</code>, <code>*</code>), escape them using a backslash (<code>\</code>).
+        </p>
+        <h3>Q: My regex search isn't working as expected. What should I do?</h3>
+        <p>
+            A: Verify your regex syntax using an online regex tester such as <a href="https://regex101.com" target="_blank">regex101.com</a>.
+            Ensure that you have enabled the regex option in the search interface.
+        </p>
+    </section>
+</main>
+<footer>
+    <p>
+        Antares Search Documentation &mdash; Enhance your search skills to find your files faster.
+    </p>
+</footer>
+</body>
+</html>

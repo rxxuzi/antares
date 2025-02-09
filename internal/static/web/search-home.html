@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Antares Search</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            background: #202124;
+            font: 16px monospace;
+            font-family: 'Poppins', sans-serif;
+            color: white;
+        }
+        h1 {
+            color: #ff1a3f;
+            font-size: 56px;
+            margin-bottom: 30px;
+        }
+        p {
+            margin-top: 40px;
+            font-size: 18px;
+        }
+        .cntr {
+            display: table;
+            width: 100%;
+            height: 100%;
+        }
+        .cntr .cntr-innr {
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /*** 新しい検索ボックスのスタイル ***/
+        .search-container {
+            position: relative;
+            width: 600px;
+            margin: 0 auto;
+        }
+        .search {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 25px;
+            padding: 0 20px 0 50px;
+            font-size: 18px;
+            background: white;
+            color: #202124;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            outline: none;
+            transition: box-shadow 0.3s ease;
+        }
+        .search:focus {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: url('https://www.svgrepo.com/show/13641/search.svg') no-repeat center;
+            background-size: contain;
+        }
+
+        /*** スイッチ型チェックボックスのスタイル ***/
+        input[type="checkbox"].switch {
+            appearance: none;
+            width: 38px;
+            height: 20px;
+            background: #bbb;
+            border-radius: 10px;
+            position: relative;
+            outline: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        input[type="checkbox"].switch:checked {
+            background: #ff1a3f;
+        }
+        input[type="checkbox"].switch::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            transition: left 0.3s ease;
+        }
+        input[type="checkbox"].switch:checked::after {
+            left: 19px;
+        }
+
+        .search-options {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .search-options div {
+            margin: 0 15px;
+            display: inline-block;
+        }
+        .search-options label {
+            margin-right: 5px;
+            font-size: 16px;
+        }
+        a {
+            color: #ff1a3f;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="cntr">
+    <div class="cntr-innr">
+        <h1>Antares</h1>
+        <!-- 新しい検索ボックス -->
+        <div class="search-container">
+            <span class="search-icon"></span>
+            <input class="search" id="inpt_search" type="text" placeholder="Search..." />
+        </div>
+        <!-- 検索オプション -->
+        <div class="search-options">
+            <div class="case-sensitivity">
+                <label for="case-sensitive-toggle">Case Sensitive</label>
+                <input type="checkbox" id="case-sensitive-toggle" class="switch">
+            </div>
+            <div class="use-regex">
+                <label for="use-regex-toggle">Use Regex</label>
+                <input type="checkbox" id="use-regex-toggle" class="switch">
+            </div>
+        </div>
+        <p>What is this? <a href="/doc/search">Documentation</a></p>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById('inpt_search');
+        const caseSensitiveToggle = document.getElementById('case-sensitive-toggle');
+        const useRegexToggle = document.getElementById('use-regex-toggle');
+
+        // Enter キーで /search?q=... にリダイレクトする処理
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                let query = searchInput.value.trim();
+                if (query === "") return;
+                let url = "/search?q=" + encodeURIComponent(query);
+                if (caseSensitiveToggle.checked) {
+                    url += "&c=true";
+                }
+                if (useRegexToggle.checked) {
+                    url += "&r=true";
+                }
+                window.location.href = url;
+            }
+        });
+    });
+</script>
+</body>
+</html>
